@@ -1,0 +1,28 @@
+PATH
+  remote: .
+  specs:
+    add_to_calendar (0.1.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    coderay (1.1.2)
+    method_source (1.0.0)
+    minitest (5.14.0)
+    pry (0.13.1)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
+    rake (10.5.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  add_to_calendar!
+  bundler (~> 2.0)
+  minitest (~> 5.0)
+  pry (~> 0.13.1)
+  rake (~> 10.0)
+
+BUNDLED WITH
+   2.0.2
