@@ -24,10 +24,58 @@ class AddToCalendarTest < Minitest::Test
 
   # TODO: test all validate_attributes
 
+  def test_attribute_title_must_be_string
+    assert_raises(ArgumentError) do
+      AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: 1, timezone: @timezone)
+    end
+  end
+
+  def test_attribute_title_must_not_be_blank
+    assert_raises(ArgumentError) do
+      AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: " ", timezone: @timezone)
+    end
+  end
+
+  def test_attribute_location_must_be_string
+    assert_raises(ArgumentError) do
+      AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone, location: 1)
+    end
+  end
+
+  def test_attribute_description_must_be_string
+    assert_raises(ArgumentError) do
+      AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone, description: 1)
+    end
+  end
+
+  def test_attribute_start_datetime_must_be_time
+    cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
+    assert cal.start_datetime.class == Time
+  end
+
+  def test_attribute_start_datetime_must_not_be_date
+    # for now
+    # update later to only allow if allday value is set
+    assert_raises(ArgumentError) do
+      AddToCalendar::URLs.new(start_datetime: Date.today, title: @title, timezone: @timezone, description: 1)
+    end
+  end
+
+  def test_attribute_start_datetime_invalid
+    assert_raises(ArgumentError) do
+      AddToCalendar::URLs.new(start_datetime: 1, title: @title, timezone: @timezone)
+    end
+  end
+
   def test_format_datetime
     cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
     formatted_datetime = cal.send(:format_date, Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0))
     assert formatted_datetime == "#{@next_month_year}#{@next_month_month}#{@next_month_day}T133000"
+  end
+
+  def test_tzinfo_object_created_successfully
+    cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
+    assert cal.timezone.class == TZInfo::DataTimezone
   end
 
 end

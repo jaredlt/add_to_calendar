@@ -2,17 +2,24 @@ PATH
   remote: .
   specs:
     add_to_calendar (0.1.0)
+      tzinfo (~> 2.0.2)
+      tzinfo-data (~> 1.2020.1)
 
 GEM
   remote: https://rubygems.org/
   specs:
     coderay (1.1.2)
+    concurrent-ruby (1.1.6)
     method_source (1.0.0)
     minitest (5.14.0)
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
     rake (10.5.0)
+    tzinfo (2.0.2)
+      concurrent-ruby (~> 1.0)
+    tzinfo-data (1.2020.1)
+      tzinfo (>= 1.0.0)
 
 PLATFORMS
   ruby
