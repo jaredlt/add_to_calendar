@@ -5,7 +5,7 @@ require "erb"
 include ERB::Util
 require 'tzinfo'
 require 'date'
-require 'pry'
+# require 'pry'
 
 
 module AddToCalendar

@@ -103,6 +103,10 @@ cal = AddToCalendar::URLs.new(event_attributes)
 
 - IE11 and lower will not work for `ical_url`, `apple_url` and `outlook_url` (IE does not properly support [data-uri links](https://caniuse.com/#feat=datauri). See [#16](https://github.com/jaredlt/add_to_calendar/issues/16)). 
 
+### More details
+
+- Read the [Wiki](https://github.com/jaredlt/add_to_calendar/wiki) for more specific details
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
