@@ -4,6 +4,8 @@ A ruby gem to generate 'Add To Calendar' URLs for Google, Apple, Office 365*, Ou
 
 *Office 365 not yet available
 
+If this gem brings you some value feel free to buy me a coffee :) [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P71PK9T)
+
 ## Installation
 
 Add this line to your application's Gemfile:
