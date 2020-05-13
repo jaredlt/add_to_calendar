@@ -61,12 +61,12 @@ event_attributes = {
 cal = AddToCalendar::URLs.new(event_attributes)
 ```
 
-Attribute      | Required? | Class | Notes
----------------|-----------|--------------------------------------------------------------------------
-start_datetime | Yes       | Time | Must be Time object
-end_datetime   | No        | Time | <ul><li>Must be Time object.</li><li>If not provided, defaults to start_datetime + 1 hour</li></ul>
-title  | Yes | String
-timezone | Yes | Must be string of of [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) Eg. 'Europe/London', 'America/New_York'
+| Attribute      | Required? | Class | Notes |
+| ---------------|-----------|-------------------------------------------------------------------------- |
+| start_datetime | Yes       | Time | Must be Time object |
+| end_datetime   | No        | Time | <ul><li>Must be Time object.</li><li>If not provided, defaults to start_datetime + 1 hour</li></ul> |
+| title  | Yes | String
+| timezone | Yes | Must be string of of [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) Eg. 'Europe/London', 'America/New_York'
 
 #### start_datetime
 
