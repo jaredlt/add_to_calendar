@@ -11,11 +11,6 @@ class AddToCalendarTest < Minitest::Test
 
     @title = "Holly's 8th Birthday!"
     @timezone = "Europe/London"
-
-    @url_with_defaults_required = "https://www.google.com/calendar/render?action=TEMPLATE" +
-                                  "&text=Holly%27s+8th+Birthday%21" + 
-                                  "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}T133000/#{@next_month_year}#{@next_month_month}#{@next_month_day}T143000" + 
-                                  "&ctz=Europe/London"
   end
 
   def test_that_it_has_a_version_number
@@ -67,6 +62,34 @@ class AddToCalendarTest < Minitest::Test
     end
   end
 
+  def test_attribute_end_datetime_invalid
+    assert_raises(ArgumentError) do
+      AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), end_datetime: 1, title: @title, timezone: @timezone)
+    end
+  end
+
+  def test_attribute_end_datetime_must_be_greater_than_start_datetime
+    assert_raises(ArgumentError) do
+      AddToCalendar::URLs.new(
+        start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+        end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day.to_i-1,13,30,00,0), 
+        title: @title, 
+        timezone: @timezone
+      )
+    end
+  end
+
+  def test_attribute_end_datetime_must_be_greater_than_start_datetime_not_equal
+    assert_raises(ArgumentError) do
+      AddToCalendar::URLs.new(
+        start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+        end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+        title: @title, 
+        timezone: @timezone
+      )
+    end
+  end
+
   def test_format_datetime
     cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
     formatted_datetime = cal.send(:format_date, Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0))
@@ -76,6 +99,52 @@ class AddToCalendarTest < Minitest::Test
   def test_tzinfo_object_created_successfully
     cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
     assert cal.timezone.class == TZInfo::DataTimezone
+  end
+
+  def test_duration_seconds
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
+      title: @title, 
+      timezone: @timezone
+    )
+    seconds = cal.send(:duration_seconds, cal.start_datetime, cal.end_datetime)
+    assert seconds == 12600 # 1700 - 1330 == 3h 30m == 210m == 12600s
+  end
+
+  def test_duration_seconds_more_than_a_day
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day.to_i+1,17,00,00,0), 
+      title: @title, 
+      timezone: @timezone
+    )
+    seconds = cal.send(:duration_seconds, cal.start_datetime, cal.end_datetime)
+    assert seconds == 99000 # 24h + 3h + 30m == 27h 30m == 1650m == 99000s
+  end
+  
+  def test_seconds_to_hours_minutes
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
+      title: @title, 
+      timezone: @timezone
+    )
+    duration_seconds = cal.send(:duration_seconds, cal.start_datetime, cal.end_datetime)
+    duration = cal.send(:seconds_to_hours_minutes, duration_seconds)
+    assert duration == "0330"
+  end
+
+  def test_seconds_to_hours_minutes_more_than_a_day
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day.to_i+1,17,00,00,0), 
+      title: @title, 
+      timezone: @timezone
+    )
+    duration_seconds = cal.send(:duration_seconds, cal.start_datetime, cal.end_datetime)
+    duration = cal.send(:seconds_to_hours_minutes, duration_seconds)
+    assert duration == "2730"
   end
 
 end

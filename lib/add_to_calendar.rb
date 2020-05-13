@@ -12,9 +12,10 @@ module AddToCalendar
   class Error < StandardError; end
   
   class URLs
-    attr_accessor :start_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description
-    def initialize(start_datetime:, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true)
+    attr_accessor :start_datetime, :end_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description
+    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true)
       @start_datetime = start_datetime
+      @end_datetime = end_datetime
       @title = title
       @timezone = TZInfo::Timezone.get(timezone)
       @location = location
@@ -30,7 +31,11 @@ module AddToCalendar
       calendar_url = "https://www.google.com/calendar/render?action=TEMPLATE"
       params = {}
       params[:text] = url_encode(title)
-      params[:dates] = "#{format_date(start_datetime)}/#{format_date(start_datetime + 60*60)}" # end time is 1 hour later
+      if end_datetime
+        params[:dates] = "#{format_date(start_datetime)}/#{format_date(end_datetime)}"
+      else
+        params[:dates] = "#{format_date(start_datetime)}/#{format_date(start_datetime + 60*60)}" # end time is 1 hour later
+      end
       params[:ctz] = timezone.identifier
       params[:location] = url_encode(location) if location
       params[:details] = url_encode(description) if description
@@ -54,12 +59,17 @@ module AddToCalendar
     # end
 
     def yahoo_url
-      # Eg. http://calendar.yahoo.com/?v=60&view=d&type=20&title=Holly%27s%208th%20Birthday!&st=20200615T170000Z&dur=0100&desc=Join%20us%20to%20celebrate%20with%20lots%20of%20games%20and%20cake!&in_loc=7%20Apartments,%20London
-      calendar_url = "http://calendar.yahoo.com/?v=60&view=d&type=20"
+      # Eg. https://calendar.yahoo.com/?v=60&view=d&type=20&title=Holly%27s%208th%20Birthday!&st=20200615T170000Z&dur=0100&desc=Join%20us%20to%20celebrate%20with%20lots%20of%20games%20and%20cake!&in_loc=7%20Apartments,%20London
+      calendar_url = "https://calendar.yahoo.com/?v=60&view=d&type=20"
       params = {}
       params[:title] = url_encode(title)
       params[:st] = utc_datetime(start_datetime)
-      params[:dur] = "0100" 
+      if end_datetime
+        seconds = duration_seconds(start_datetime, end_datetime)
+        params[:dur] = seconds_to_hours_minutes(seconds)
+      else
+        params[:dur] = "0100" 
+      end
       params[:desc] = url_encode(description) if description
       if add_url_to_description && url
         if params[:desc]
@@ -83,7 +93,11 @@ module AddToCalendar
       calendar_url = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT"
       params = {}
       params[:DTSTART] = utc_datetime(start_datetime)
-      params[:DTEND] = utc_datetime(start_datetime + 60*60) # 1 hour later
+      if end_datetime
+        params[:DTEND] = utc_datetime(end_datetime)
+      else
+        params[:DTEND] = utc_datetime(start_datetime + 60*60) # 1 hour later
+      end
       params[:SUMMARY] = url_encode(title)
       params[:URL] = url_encode(url) if url
       params[:DESCRIPTION] = url_encode(description) if description
@@ -118,9 +132,13 @@ module AddToCalendar
   
     private
       def validate_attributes
-        msg =  "- Object must be a DateTime or Time object."
+        # msg =  "- Object must be a DateTime or Time object."
+        msg =  "- Object must be a Time object."
         raise(ArgumentError, ":start_datetime #{msg} #{start_datetime.class} given") unless start_datetime.kind_of? Time
-        # raise(ArgumentError, ":dtend #{msg} #{hash[:dtend].class} given") unless hash[:dtend].kind_of? Time
+        if end_datetime
+          raise(ArgumentError, ":end_datetime #{msg} #{end_datetime.class} given") unless end_datetime.kind_of? Time
+          raise(ArgumentError, ":end_datetime must be greater than :start_datetime") unless end_datetime > start_datetime
+        end
   
         raise(ArgumentError, ":title must be a string") unless self.title.kind_of? String
         raise(ArgumentError, ":title must not be blank") if self.title.strip.empty? # strip first, otherwise " ".empty? #=> false
@@ -150,6 +168,14 @@ module AddToCalendar
       # Google Calendar format (rename method?)
       def format_date(start_datetime)
         start_datetime.strftime('%Y%m%dT%H%M%S')
+      end
+
+      def duration_seconds(start_time, end_time)
+        (start_time.to_i - end_time.to_i).abs
+      end
+
+      def seconds_to_hours_minutes(sec)
+        "%02d%02d" % [sec / 3600, sec / 60 % 60]
       end
   end
 end
