@@ -1,6 +1,8 @@
 # AddToCalendar
 
-A ruby gem to generate 'Add To Calendar' URLs for Google, Apple, Office 365, Outlook and Yahoo calendars.
+A ruby gem to generate 'Add To Calendar' URLs for Google, Apple, Office 365*, Outlook and Yahoo calendars.
+
+*Office 365 not yet available
 
 ## Installation
 
@@ -39,17 +41,36 @@ cal.google_url
 cal.yahoo_url
 #=> "https://calendar.yahoo.com/?v=60&view=d&type=20&title=Christmas%20party%21&st=20201212T133000Z&dur=0100"
 
-# ical provided a data-uri which will download a *.ics file (more details below)
+# ical provided a data-uri which will download a properly formatted *.ics file (more details below)
 cal.ical_url
 #=> "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART=20201212T133000Z%0ADTEND=20201212T143000Z%0ASUMMARY=Christmas%20party%21%0AUID=-20201212T133000Z-Christmas%20party%21%0AEND:VEVENT%0AEND:VCALENDAR"
+
+# apple_url and outlook_url are simply helper methods that call ical_url
+cal.apple_url
+#=> "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART=20201212T133000Z%0ADTEND=20201212T143000Z%0ASUMMARY=Christmas%20party%21%0AUID=-20201212T133000Z-Christmas%20party%21%0AEND:VEVENT%0AEND:VCALENDAR"
+
+cal.outlook_url
+#=> "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART=20201212T133000Z%0ADTEND=20201212T143000Z%0ASUMMARY=Christmas%20party%21%0AUID=-20201212T133000Z-Christmas%20party%21%0AEND:VEVENT%0AEND:VCALENDAR"
+```
+
+### Creating HTML links
+
+```erb
+<!-- Simply pass the url into the href Eg. in ERB -->
+<a href="<%= cal.google_url %>">Add to Google Calendar</a>
+
+<a href="<%= cal.yahoo_url %>">Add to Yahoo Calendar</a>
+
+<!-- for ical_url, apple_url and outlook_url you can set the filename like so -->
+<a download="calendar-event.ics" href="<%= cal.ical_url %>">Download iCal</a>
 ```
 
 ### Event attributes
 
 ```ruby
 event_attributes = {
-    start_datetime: Time.new(2020,12,12,13,30,00,0), # required
-    end_datetime: Time.new(2020,12,12,13,30,00,0),
+    start_datetime: Time.new(2020,12,12,9,00,00,0), # required
+    end_datetime: Time.new(2020,12,12,17,00,00,0),
     title: "Ruby Conference", # required
     timezone: 'America/New_York', # required
     location: "20 W 34th St, New York, NY 10001", 
@@ -73,10 +94,15 @@ cal = AddToCalendar::URLs.new(event_attributes)
 | add_url_to_description | No        | true/false | defaults to `true`. Set `add_url_to_description: false` to stop the URL from being added to the description |
 
 
-#### Timezones and offsets
+### Timezones and offsets
 
-- offset values eg. "2020-05-13 15:31:00 **+05:00**" are ignored. It is only important that you have the correct date and time numbers set. The timezone is set directly using it's own attribute `timezone`
+- Offset values eg. "2020-05-13 15:31:00 **+05:00**" are ignored. It is only important that you have the correct date and time numbers set. The timezone is set directly using its own attribute `timezone`.
+- You must set a timezone so that when users add the event to their calendar it shows at their correct local time. 
+  - Eg. London event @ `2020-05-13 13:30:00` will save in a New Yorkers calendar as local time `2020-05-13 17:30:00`
 
+### Browser support
+
+- IE11 and lower will not work for `ical_url`, `apple_url` and `outlook_url` (IE does not properly support [data-uri links](https://caniuse.com/#feat=datauri). See [#16](https://github.com/jaredlt/add_to_calendar/issues/16)). 
 
 ## Development
 
@@ -86,7 +112,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/add_to_calendar.
+Bug reports and pull requests are welcome on GitHub at https://github.com/jaredlt/add_to_calendar.
 
 ## License
 
