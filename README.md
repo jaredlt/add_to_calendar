@@ -28,28 +28,28 @@ Or install it yourself as:
 
 ```ruby
 # create new instance, adding your event attributes
-cal = AddToCalendar::URLs.new(
+@cal = AddToCalendar::URLs.new(
         start_datetime: Time.new(2020,12,12,13,30,00,0), 
         title: "Christmas party!", 
         timezone: 'Europe/London'
       )
 
 # access 'add to calendar' URLs
-cal.google_url
+@cal.google_url
 #=> "https://www.google.com/calendar/render?action=TEMPLATE&text=Christmas%20party%21&dates=20201212T133000/20201212T143000&ctz=Europe/London"
 
-cal.yahoo_url
+@cal.yahoo_url
 #=> "https://calendar.yahoo.com/?v=60&view=d&type=20&title=Christmas%20party%21&st=20201212T133000Z&dur=0100"
 
 # ical provided a data-uri which will download a properly formatted *.ics file (more details below)
-cal.ical_url
+@cal.ical_url
 #=> "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART=20201212T133000Z%0ADTEND=20201212T143000Z%0ASUMMARY=Christmas%20party%21%0AUID=-20201212T133000Z-Christmas%20party%21%0AEND:VEVENT%0AEND:VCALENDAR"
 
 # apple_url and outlook_url are simply helper methods that call ical_url
-cal.apple_url
+@cal.apple_url
 #=> "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART=20201212T133000Z%0ADTEND=20201212T143000Z%0ASUMMARY=Christmas%20party%21%0AUID=-20201212T133000Z-Christmas%20party%21%0AEND:VEVENT%0AEND:VCALENDAR"
 
-cal.outlook_url
+@cal.outlook_url
 #=> "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART=20201212T133000Z%0ADTEND=20201212T143000Z%0ASUMMARY=Christmas%20party%21%0AUID=-20201212T133000Z-Christmas%20party%21%0AEND:VEVENT%0AEND:VCALENDAR"
 ```
 
@@ -57,12 +57,12 @@ cal.outlook_url
 
 ```erb
 <!-- Simply pass the url into the href Eg. in ERB -->
-<a href="<%= cal.google_url %>">Add to Google Calendar</a>
+<a href="<%= @cal.google_url %>">Add to Google Calendar</a>
 
-<a href="<%= cal.yahoo_url %>">Add to Yahoo Calendar</a>
+<a href="<%= @cal.yahoo_url %>">Add to Yahoo Calendar</a>
 
 <!-- for ical_url, apple_url and outlook_url you can set the filename like so -->
-<a download="calendar-event.ics" href="<%= cal.ical_url %>">Download iCal</a>
+<a download="calendar-event.ics" href="<%= @cal.ical_url %>">Download iCal</a>
 ```
 
 ### Event attributes
