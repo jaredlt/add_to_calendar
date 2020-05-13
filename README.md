@@ -93,6 +93,10 @@ cal = AddToCalendar::URLs.new(event_attributes)
 | description            | No        | String     | Accepts newlines by passing `\n` Eg. `"Join us for fun & drinks\n\nPS. Smart casual"` |
 | add_url_to_description | No        | true/false | defaults to `true`. Set `add_url_to_description: false` to stop the URL from being added to the description |
 
+### Add to Google calendar screenshot
+
+NB. Any hyperlinks added to description will automatically be clickable, but only in view mode, not in edit mode as below:
+
 ![Google Calendar](/imgs/screenshots/google-calendar.jpg?raw=true "Google Calendar")
 
 ### Timezones and offsets
