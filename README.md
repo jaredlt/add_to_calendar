@@ -41,7 +41,7 @@ Or install it yourself as:
 @cal.yahoo_url
 #=> "https://calendar.yahoo.com/?v=60&view=d&type=20&title=Christmas%20party%21&st=20201212T133000Z&dur=0100"
 
-# ical provided a data-uri which will download a properly formatted *.ics file (more details below)
+# ical provides a data-uri which will download a properly formatted *.ics file (see 'Creating HTML links' section)
 @cal.ical_url
 #=> "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART=20201212T133000Z%0ADTEND=20201212T143000Z%0ASUMMARY=Christmas%20party%21%0AUID=-20201212T133000Z-Christmas%20party%21%0AEND:VEVENT%0AEND:VCALENDAR"
 
@@ -93,6 +93,7 @@ cal = AddToCalendar::URLs.new(event_attributes)
 | description            | No        | String     | Accepts newlines by passing `\n` Eg. `"Join us for fun & drinks\n\nPS. Smart casual"` |
 | add_url_to_description | No        | true/false | defaults to `true`. Set `add_url_to_description: false` to stop the URL from being added to the description |
 
+![Google Calendar](/imgs/screenshots/google-calendar.jpg?raw=true "Google Calendar")
 
 ### Timezones and offsets
 
