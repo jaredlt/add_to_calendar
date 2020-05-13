@@ -62,23 +62,16 @@ cal = AddToCalendar::URLs.new(event_attributes)
 ```
 
 | Attribute      | Required? | Class | Notes |
-| ---------------|-----------|-------------------------------------------------------------------------- |
-| start_datetime | Yes       | Time | Must be Time object |
-| end_datetime   | No        | Time | <ul><li>Must be Time object.</li><li>If not provided, defaults to start_datetime + 1 hour</li></ul> |
-| title  | Yes | String | aoweifj |
-| timezone | Yes | String |Must be string of of [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) Eg. 'Europe/London', 'America/New_York' |
+| ---------------|-----------|-------|-------|
+| start_datetime | Yes       | Time  |       |
+| end_datetime   | No        | Time  | <ul><li>If not provided, defaults to start_datetime + 1 hour</li><li>Must be > start_datetime</li></ul> |
+| title  | Yes | String |  |
+| timezone | Yes | String | Must be in [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) Eg. 'Europe/London', 'America/New_York' |
+| location | No | String | |
+| url | No | String | Most providers do not have a native URL field. If you set `url` it will be added to the end of the description field (see `add_url_to_description`) |
+| description | No | String | Accepts newlines by passing `\n` Eg. `"Join us for fun & drinks\n\n PS. Smart casual"` |
+| add_url_to_description | No | true/false | defaults to `true`. Set `add_url_to_description: false` to stop the URL from being added to the description |
 
-#### start_datetime
-
-- Required
-- Must be Time object
-
-#### end_datetime
-
-- Optional
-- If not provided, defaults to start_datetime + 1 hour
-- If provided, must be Time object
-- Must be > start_datetime
 
 #### Timezones and offsets
 
