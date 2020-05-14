@@ -162,7 +162,7 @@ module AddToCalendar
           datetime.strftime("%S").to_i
         ).utc
 
-        formatted = t.strftime('%Y%m%dT%H%M%SZ')
+        return t.strftime('%Y%m%dT%H%M%SZ')
       end
   
       # Google Calendar format (rename method?)

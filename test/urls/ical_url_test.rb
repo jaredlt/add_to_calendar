@@ -2,7 +2,7 @@ require "test_helper"
 
 class IcalUrlTest < Minitest::Test
   def setup
-    next_month = Time.now + 60*60*24*30
+    # next_month = Time.now + 60*60*24*30
     # @next_month_year = next_month.strftime('%Y')
     # @next_month_month = next_month.strftime('%m')
     # @next_month_day = next_month.strftime('%d')

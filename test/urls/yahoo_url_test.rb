@@ -2,7 +2,7 @@ require "test_helper"
 
 class YahooUrlTest < Minitest::Test
   def setup
-    next_month = Time.now + 60*60*24*30
+    # next_month = Time.now + 60*60*24*30
     @next_month_year = "2020"
     @next_month_month = "05"
     @next_month_day = "12"
