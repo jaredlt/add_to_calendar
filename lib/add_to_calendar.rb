@@ -1,6 +1,7 @@
 require "add_to_calendar/version"
 
-# needed for url_encode method
+# erb util needed for url_encode method
+# CGI::escape uses + instead of %20 which doesn't work for ical files
 require "erb"
 include ERB::Util
 require 'tzinfo'
@@ -54,9 +55,33 @@ module AddToCalendar
       return calendar_url
     end
 
-    # def office_365_url
+    def office_365_url
+      # Eg. https://outlook.office365.com/owa/?path=/calendar/action/compose&rru=addevent&subject=Holly%27s%208th%20Birthday%21&startdt=20200512T123000Z&enddt=20200512T160000Z&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU
+      calendar_url = "https://outlook.office365.com/owa/?path=/calendar/action/compose&rru=addevent"
+      params = {}
+      params[:subject] = url_encode(title)
+      params[:startdt] = utc_datetime(start_datetime)
+      if end_datetime
+        params[:enddt] = utc_datetime(end_datetime)
+      else
+        params[:enddt] = utc_datetime(start_datetime + 60*60) # 1 hour later
+      end
+      params[:body] = url_encode(description) if description
+      if add_url_to_description && url
+        if params[:body]
+          params[:body] << url_encode("\n\n#{url}")
+        else
+          params[:body] = url_encode(url)
+        end
+      end
+      params[:location] = url_encode(location) if location
 
-    # end
+      params.each do |key, value|
+        calendar_url << "&#{key}=#{value}"
+      end
+  
+      return calendar_url
+    end
 
     def yahoo_url
       # Eg. https://calendar.yahoo.com/?v=60&view=d&type=20&title=Holly%27s%208th%20Birthday!&st=20200615T170000Z&dur=0100&desc=Join%20us%20to%20celebrate%20with%20lots%20of%20games%20and%20cake!&in_loc=7%20Apartments,%20London
