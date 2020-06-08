@@ -1,8 +1,6 @@
 # AddToCalendar
 
-A ruby gem to generate 'Add To Calendar' URLs for Google, Apple, Office 365*, Outlook and Yahoo calendars.
-
-*Office 365 not yet available
+A ruby gem to generate 'Add To Calendar' URLs for Apple, Google, Office 365, Outlook, Outlook.com and Yahoo calendars.
 
 If this gem brings you some value feel free to buy me a coffee :) [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P71PK9T)
 
@@ -42,6 +40,13 @@ Or install it yourself as:
 
 @cal.yahoo_url
 #=> "https://calendar.yahoo.com/?v=60&view=d&type=20&title=Christmas%20party%21&st=20201212T133000Z&dur=0100"
+
+@cal.office365_url
+#=> "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=Christmas%20party%21&startdt=2020-12-12T13:30:00Z&enddt=2020-12-12T14:30:00Z"
+
+# For outlook.com, different to Outlook the desktop application below
+@cal.outlook_com_url
+#=> "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=Christmas%20party%21&startdt=2020-12-12T13:30:00Z&enddt=2020-12-12T14:30:00Z"
 
 # ical provides a data-uri which will download a properly formatted *.ics file (see 'Creating HTML links' section)
 @cal.ical_url

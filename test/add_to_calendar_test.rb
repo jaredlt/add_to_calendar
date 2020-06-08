@@ -90,9 +90,9 @@ class AddToCalendarTest < Minitest::Test
     end
   end
 
-  def test_format_datetime
+  def test_format_datetime_google
     cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
-    formatted_datetime = cal.send(:format_date, Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0))
+    formatted_datetime = cal.send(:format_date_google, Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0))
     assert formatted_datetime == "#{@next_month_year}#{@next_month_month}#{@next_month_day}T133000"
   end
 

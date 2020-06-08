@@ -33,9 +33,9 @@ module AddToCalendar
       params = {}
       params[:text] = url_encode(title)
       if end_datetime
-        params[:dates] = "#{format_date(start_datetime)}/#{format_date(end_datetime)}"
+        params[:dates] = "#{format_date_google(start_datetime)}/#{format_date_google(end_datetime)}"
       else
-        params[:dates] = "#{format_date(start_datetime)}/#{format_date(start_datetime + 60*60)}" # end time is 1 hour later
+        params[:dates] = "#{format_date_google(start_datetime)}/#{format_date_google(start_datetime + 60*60)}" # end time is 1 hour later
       end
       params[:ctz] = timezone.identifier
       params[:location] = url_encode(location) if location
@@ -48,34 +48,6 @@ module AddToCalendar
         end
       end
   
-      params.each do |key, value|
-        calendar_url << "&#{key}=#{value}"
-      end
-  
-      return calendar_url
-    end
-
-    def office_365_url
-      # Eg. https://outlook.office365.com/owa/?path=/calendar/action/compose&rru=addevent&subject=Holly%27s%208th%20Birthday%21&startdt=20200512T123000Z&enddt=20200512T160000Z&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU
-      calendar_url = "https://outlook.office365.com/owa/?path=/calendar/action/compose&rru=addevent"
-      params = {}
-      params[:subject] = url_encode(title)
-      params[:startdt] = utc_datetime(start_datetime)
-      if end_datetime
-        params[:enddt] = utc_datetime(end_datetime)
-      else
-        params[:enddt] = utc_datetime(start_datetime + 60*60) # 1 hour later
-      end
-      params[:body] = url_encode(description) if description
-      if add_url_to_description && url
-        if params[:body]
-          params[:body] << url_encode("\n\n#{url}")
-        else
-          params[:body] = url_encode(url)
-        end
-      end
-      params[:location] = url_encode(location) if location
-
       params.each do |key, value|
         calendar_url << "&#{key}=#{value}"
       end
@@ -110,6 +82,16 @@ module AddToCalendar
       end
   
       return calendar_url
+    end
+
+    def office365_url
+      # Eg. https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=Holly%27s%208th%20Birthday%21&startdt=2020-05-12T12:30:00Z&enddt=2020-05-12T16:00:00Z&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU
+      microsoft("office365")
+    end
+    
+    def outlook_com_url
+      # Eg. https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=Holly%27s%208th%20Birthday%21&startdt=2020-05-12T12:30:00Z&enddt=2020-05-12T16:00:00Z&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU
+      microsoft("outlook.com")
     end
 
     def ical_url
@@ -177,6 +159,40 @@ module AddToCalendar
         end
       end
 
+      def microsoft(service)
+        # Eg. 
+        if service == "outlook.com"
+          calendar_url = "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent"
+        elsif service == "office365"
+          calendar_url = "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent"
+        else
+          raise MicrosoftServiceError, ":service must be 'outlook.com' or 'office365'. '#{service}' given"
+        end
+        params = {}
+        params[:subject] = url_encode(title)
+        params[:startdt] = utc_datetime_microsoft(start_datetime)
+        if end_datetime
+          params[:enddt] = utc_datetime_microsoft(end_datetime)
+        else
+          params[:enddt] = utc_datetime_microsoft(start_datetime + 60*60) # 1 hour later
+        end
+        params[:body] = url_encode(description) if description
+        if add_url_to_description && url
+          if params[:body]
+            params[:body] << url_encode("\n\n#{url}")
+          else
+            params[:body] = url_encode(url)
+          end
+        end
+        params[:location] = url_encode(location) if location
+  
+        params.each do |key, value|
+          calendar_url << "&#{key}=#{value}"
+        end
+    
+        return calendar_url
+      end
+
       def utc_datetime(datetime)
         t = timezone.local_time(
           datetime.strftime("%Y").to_i, 
@@ -189,9 +205,21 @@ module AddToCalendar
 
         return t.strftime('%Y%m%dT%H%M%SZ')
       end
+
+      def utc_datetime_microsoft(datetime)
+        t = timezone.local_time(
+          datetime.strftime("%Y").to_i, 
+          datetime.strftime("%m").to_i, 
+          datetime.strftime("%d").to_i, 
+          datetime.strftime("%H").to_i, 
+          datetime.strftime("%M").to_i, 
+          datetime.strftime("%S").to_i
+        ).utc
+
+        return t.strftime('%Y-%m-%dT%H:%M:%SZ')
+      end
   
-      # Google Calendar format (rename method?)
-      def format_date(start_datetime)
+      def format_date_google(start_datetime)
         start_datetime.strftime('%Y%m%dT%H%M%S')
       end
 
