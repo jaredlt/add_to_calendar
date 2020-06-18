@@ -157,13 +157,36 @@ class AddToCalendarTest < Minitest::Test
       timezone: @timezone
     )
     string_without_newlines = cal.send(:newlines_to_html_br, "string without newlines")
-    assert string_without_newlines = "string without newlines"
+    assert string_without_newlines == "string without newlines"
 
     string_with_newline = cal.send(:newlines_to_html_br, "string with\nnewline")
-    assert string_with_newline = "string with<br>newline"
+    assert string_with_newline == "string with<br>newline"
 
     string_with_newlines = cal.send(:newlines_to_html_br, "string\nwith\n\nnewlines")
-    assert string_with_newline = "string<br>with<br><br>newline"
+    assert string_with_newlines == "string<br>with<br><br>newlines"
+  end
+
+  def test_ical_description_url_encoded_with_newlines
+    # final *.ics file must include `\n`
+    # which means the string output must be `\\n` (not url encoded)
+    # this method should:
+    # url encode all characters except newlines \n
+    # update all newlines \n to \\n
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
+      title: @title, 
+      timezone: @timezone
+    )
+    string_without_newlines = cal.send(:url_encode_ical_description, "string without newlines")
+    assert string_without_newlines == "string%20without%20newlines"
+
+    string_with_newline = cal.send(:url_encode_ical_description, "string with\nnewline")
+    assert string_with_newline == "string%20with\\nnewline"
+
+    string_with_newlines = cal.send(:url_encode_ical_description, "string\nwith\n\nnewlines")
+    assert string_with_newlines == "string\\nwith\\n\\nnewlines"
+
   end
 
 end

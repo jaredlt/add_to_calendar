@@ -107,10 +107,10 @@ module AddToCalendar
       end
       params[:SUMMARY] = url_encode(title)
       params[:URL] = url_encode(url) if url
-      params[:DESCRIPTION] = url_encode(description) if description
+      params[:DESCRIPTION] = url_encode_ical_description(description) if description
       if add_url_to_description && url
         if params[:DESCRIPTION]
-          params[:DESCRIPTION] << "\n\n#{url_encode(url)}"
+          params[:DESCRIPTION] << "\\n\\n#{url_encode(url)}"
         else
           params[:DESCRIPTION] = url_encode(url)
         end
@@ -121,7 +121,7 @@ module AddToCalendar
       
       new_line = "%0A"
       params.each do |key, value|
-        calendar_url << "#{new_line}#{key}=#{value}"
+        calendar_url << "#{new_line}#{key}:#{value}"
       end
 
       calendar_url << "%0AEND:VEVENT%0AEND:VCALENDAR"
@@ -237,6 +237,16 @@ module AddToCalendar
 
       def newlines_to_html_br(string)
         string.gsub(/(?:\n\r?|\r\n?)/, '<br>')
+      end
+
+      def url_encode_ical_description(description)
+        description.split("\n").map { |e| 
+          if e == "\n"
+            "\\n"
+          else
+            url_encode(e) if e != "\n" 
+          end
+        }.join("\\n")
       end
   end
 end
