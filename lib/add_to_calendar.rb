@@ -118,7 +118,7 @@ module AddToCalendar
       params[:LOCATION] = url_encode(location) if location
       params[:UID] = "-#{url_encode(url)}" if url
       params[:UID] = "-#{utc_datetime(start_datetime)}-#{url_encode(title)}" unless params[:UID] # set uid based on starttime and title only if url is unavailable
-
+      
       new_line = "%0A"
       params.each do |key, value|
         calendar_url << "#{new_line}#{key}=#{value}"
@@ -194,27 +194,31 @@ module AddToCalendar
       end
 
       def utc_datetime(datetime)
-        t = timezone.local_time(
-          datetime.strftime("%Y").to_i, 
-          datetime.strftime("%m").to_i, 
-          datetime.strftime("%d").to_i, 
-          datetime.strftime("%H").to_i, 
-          datetime.strftime("%M").to_i, 
-          datetime.strftime("%S").to_i
-        ).utc
+        t = timezone.local_to_utc(
+          Time.new(
+            datetime.strftime("%Y").to_i, 
+            datetime.strftime("%m").to_i, 
+            datetime.strftime("%d").to_i, 
+            datetime.strftime("%H").to_i, 
+            datetime.strftime("%M").to_i, 
+            datetime.strftime("%S").to_i
+          )
+        )
 
         return t.strftime('%Y%m%dT%H%M%SZ')
       end
 
       def utc_datetime_microsoft(datetime)
-        t = timezone.local_time(
-          datetime.strftime("%Y").to_i, 
-          datetime.strftime("%m").to_i, 
-          datetime.strftime("%d").to_i, 
-          datetime.strftime("%H").to_i, 
-          datetime.strftime("%M").to_i, 
-          datetime.strftime("%S").to_i
-        ).utc
+        t = timezone.local_to_utc(
+          Time.new(
+            datetime.strftime("%Y").to_i, 
+            datetime.strftime("%m").to_i, 
+            datetime.strftime("%d").to_i, 
+            datetime.strftime("%H").to_i, 
+            datetime.strftime("%M").to_i, 
+            datetime.strftime("%S").to_i
+          )
+        )
 
         return t.strftime('%Y-%m-%dT%H:%M:%SZ')
       end
