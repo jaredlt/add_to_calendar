@@ -176,10 +176,10 @@ module AddToCalendar
         else
           params[:enddt] = utc_datetime_microsoft(start_datetime + 60*60) # 1 hour later
         end
-        params[:body] = url_encode(description) if description
+        params[:body] = url_encode(newlines_to_html_br(description)) if description
         if add_url_to_description && url
           if params[:body]
-            params[:body] << url_encode("\n\n#{url}")
+            params[:body] << url_encode(newlines_to_html_br("\n\n#{url}"))
           else
             params[:body] = url_encode(url)
           end
@@ -229,6 +229,10 @@ module AddToCalendar
 
       def seconds_to_hours_minutes(sec)
         "%02d%02d" % [sec / 3600, sec / 60 % 60]
+      end
+
+      def newlines_to_html_br(string)
+        string.gsub(/(?:\n\r?|\r\n?)/, '<br>')
       end
   end
 end

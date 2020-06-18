@@ -79,19 +79,27 @@ class Office365UrlTest < Minitest::Test
 
   def test_with_url_and_description
     cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone, url: @url, description: @description)
-    assert cal.office365_url == @url_with_defaults_required + "&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details"
+    assert cal.office365_url == @url_with_defaults_required + "&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%3Cbr%3E%3Cbr%3Ehttps%3A%2F%2Fwww.example.com%2Fevent-details"
   end
 
-  # def test_description_with_newlines_from_user_input
-  #   cal = AddToCalendar::URLs.new(
-  #     start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
-  #     title: @title, 
-  #     timezone: @timezone, 
-  #     url: @url, 
-  #     description: "Come join us for lots of fun & cake!\n\nDon't forget your swimwear!"
-  #   )
-  #   assert cal.office365_url == @url_with_defaults_required + "&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0ADon%27t%20forget%20your%20swimwear%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details"
-  # end
+  def test_convert_newline_to_url_encoded_br
+    # for other providers you pass newline `\n` to get a multi-line body
+    # but this does not work for Office36/Outlook.com
+    # Instead we must use `<br>` (url encoded: `%3Cbr%3E`)
+    cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone, description: "multi\nline\ndescription")
+    assert cal.office365_url == @url_with_defaults_required + "&body=multi%3Cbr%3Eline%3Cbr%3Edescription"
+  end
+
+  def test_description_with_newlines_from_user_input
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      title: @title, 
+      timezone: @timezone, 
+      url: @url, 
+      description: "Come join us for lots of fun & cake!\n\nDon't forget your swimwear!"
+    )
+    assert cal.office365_url == @url_with_defaults_required + "&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%3Cbr%3E%3Cbr%3EDon%27t%20forget%20your%20swimwear%21%3Cbr%3E%3Cbr%3Ehttps%3A%2F%2Fwww.example.com%2Fevent-details"
+  end
 
   def test_add_url_to_description_false_without_url
     cal = AddToCalendar::URLs.new(
@@ -128,7 +136,7 @@ class Office365UrlTest < Minitest::Test
                                  "&subject=Holly%27s%208th%20Birthday%21" + 
                                  "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T12:30:00Z" + 
                                  "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T16:00:00Z" + 
-                                 "&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details" + 
+                                 "&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%3Cbr%3E%3Cbr%3Ehttps%3A%2F%2Fwww.example.com%2Fevent-details" + 
                                  "&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU"
   end
   

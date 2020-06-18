@@ -147,4 +147,23 @@ class AddToCalendarTest < Minitest::Test
     assert duration == "2730"
   end
 
+  def test_newlines_convert_to_html_br
+    # Office365 & Outlook.com don't accept newlines for multi-line bodies
+    # instead we must convert them to <br> tags
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
+      title: @title, 
+      timezone: @timezone
+    )
+    string_without_newlines = cal.send(:newlines_to_html_br, "string without newlines")
+    assert string_without_newlines = "string without newlines"
+
+    string_with_newline = cal.send(:newlines_to_html_br, "string with\nnewline")
+    assert string_with_newline = "string with<br>newline"
+
+    string_with_newlines = cal.send(:newlines_to_html_br, "string\nwith\n\nnewlines")
+    assert string_with_newline = "string<br>with<br><br>newline"
+  end
+
 end
