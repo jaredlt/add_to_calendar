@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Jared Turner"]
   spec.email         = ["jaredlt01@gmail.com"]
 
-  spec.summary       = "Generate 'Add To Calendar' URLs for Google, Apple, Office 365, Outlook, Yahoo calendars"
+  spec.summary       = "Generate 'Add To Calendar' URLs for Apple, Google, Office 365, Outlook, Outlook.com and Yahoo calendars"
   # spec.description   = %q{TODO: Write a longer description or delete this line.}
   spec.homepage      = "https://github.com/jaredlt/add_to_calendar"
   spec.license       = "MIT"
@@ -28,8 +28,8 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.0'
 
-  spec.add_dependency "tzinfo", "~> 2.0.2"
-  spec.add_dependency "tzinfo-data", "~> 1.2020.1"
+  spec.add_dependency "tzinfo", ">= 1.1"
+  spec.add_dependency "tzinfo-data", "~> 1.2020"
 
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 13.0.1"

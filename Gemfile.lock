@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    add_to_calendar (0.2.0)
-      tzinfo (~> 2.0.2)
-      tzinfo-data (~> 1.2020.1)
+    add_to_calendar (0.2.1)
+      tzinfo (>= 1.1)
+      tzinfo-data (~> 1.2020)
 
 GEM
   remote: https://rubygems.org/
