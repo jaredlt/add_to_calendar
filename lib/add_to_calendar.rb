@@ -239,8 +239,9 @@ module AddToCalendar
         string.gsub(/(?:\n\r?|\r\n?)/, '<br>')
       end
 
-      def url_encode_ical(string)
+      def url_encode_ical(s)
         # per https://tools.ietf.org/html/rfc5545#section-3.3.11
+        string = s.dup # don't modify original input
         string.gsub!("\\", "\\\\\\") # \ >> \\     --yes, really: https://stackoverflow.com/questions/6209480/how-to-replace-backslash-with-double-backslash
         string.gsub!(",", "\\,")
         string.gsub!(";", "\\;")

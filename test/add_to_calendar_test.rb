@@ -239,4 +239,23 @@ class AddToCalendarTest < Minitest::Test
     assert rn_newline == "rn\\nnewline"
   end
 
+  def test_calling_class_methods_should_not_mutate_initialized_attributes
+    event_attributes = {
+      start_datetime: Time.new(2020,12,12,9,00,00,0), # required
+      end_datetime: Time.new(2020,12,12,17,00,00,0),
+      title: "Ruby Conference; Rails Conference", # required
+      timezone: 'America/New_York', # required
+      location: "20 W 34th St, New York, NY 10001", 
+      url: "https://www.ruby-lang.org/en/",
+      description: "Join us to learn\nall about Ruby \\ Rails.",
+      add_url_to_description: true # defaults to true
+    }
+    cal = AddToCalendar::URLs.new(event_attributes)
+    cal.apple_url
+    assert cal.location == "20 W 34th St, New York, NY 10001"
+    assert cal.location != "20 W 34th St\\, New York\\, NY 10001" # to show what it shouldn't look like
+    cal.google_url
+    assert cal.location == "20 W 34th St, New York, NY 10001"
+  end
+
 end
