@@ -169,24 +169,74 @@ class AddToCalendarTest < Minitest::Test
   def test_ical_description_url_encoded_with_newlines
     # final *.ics file must include `\n`
     # which means the string output must be `\\n` (not url encoded)
+    # this is to ensure it works when included in data-uris
     # this method should:
     # url encode all characters except newlines \n
     # update all newlines \n to \\n
-    cal = AddToCalendar::URLs.new(
-      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
-      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
-      title: @title, 
-      timezone: @timezone
-    )
-    string_without_newlines = cal.send(:url_encode_ical_description, "string without newlines")
+    event_attributes = {
+      start_datetime: Time.new(2020,12,12,9,00,00,0), # required
+      end_datetime: Time.new(2020,12,12,17,00,00,0),
+      title: "Ruby Conference", # required
+      timezone: 'America/New_York', # required
+      location: "20 W 34th St, New York, NY 10001", 
+      url: "https://www.ruby-lang.org/en/",
+      description: "Join us to learn\n\nall about Ruby.",
+      add_url_to_description: true # defaults to true
+    }
+    cal = AddToCalendar::URLs.new(event_attributes)
+
+    string_without_newlines = cal.send(:url_encode_ical, "string without newlines")
     assert string_without_newlines == "string%20without%20newlines"
 
-    string_with_newline = cal.send(:url_encode_ical_description, "string with\nnewline")
+    string_with_newline = cal.send(:url_encode_ical, "string with\nnewline")
     assert string_with_newline == "string%20with\\nnewline"
 
-    string_with_newlines = cal.send(:url_encode_ical_description, "string\nwith\n\nnewlines")
+    string_with_newlines = cal.send(:url_encode_ical, "string\nwith\n\nnewlines")
     assert string_with_newlines == "string\\nwith\\n\\nnewlines"
 
+  end
+
+  def test_ical_escapes_special_characters
+    # per https://tools.ietf.org/html/rfc5545#section-3.3.11
+    # special characters are: BACKSLASH, COMMA, SEMICOLON, NEWLINE
+    event_attributes = {
+      start_datetime: Time.new(2020,12,12,9,00,00,0), # required
+      end_datetime: Time.new(2020,12,12,17,00,00,0),
+      title: "Ruby Conference; Rails Conference", # required
+      timezone: 'America/New_York', # required
+      location: "20 W 34th St, New York, NY 10001", 
+      url: "https://www.ruby-lang.org/en/",
+      description: "Join us to learn all about Ruby \\ Rails.",
+      add_url_to_description: true # defaults to true
+    }
+    cal = AddToCalendar::URLs.new(event_attributes)
+
+    backslash = cal.send(:url_encode_ical, "Ruby\\Rails")
+    assert backslash == "Ruby%5C%5CRails" # url_encoded `\\`` where %5C == \
+
+    comma = cal.send(:url_encode_ical, "Ruby,Rails")
+    assert comma == "Ruby%5C%2CRails" # url_encoded `\,` where %2C == ,
+
+    semicolon = cal.send(:url_encode_ical, "Ruby;Rails")
+    assert semicolon == "Ruby%5C%3BRails" # url_encoded `\;` where %3B == ;
+  end
+
+  def test_rn_newline_should_be_detected_converted_and_escaped
+    # \r\n should be converted to \n so that we can also escape them to \\n
+    event_attributes = {
+      start_datetime: Time.new(2020,12,12,9,00,00,0), # required
+      end_datetime: Time.new(2020,12,12,17,00,00,0),
+      title: "Ruby Conference; Rails Conference", # required
+      timezone: 'America/New_York', # required
+      location: "20 W 34th St, New York, NY 10001", 
+      url: "https://www.ruby-lang.org/en/",
+      description: "Join us to learn all about Ruby \\ Rails.",
+      add_url_to_description: true # defaults to true
+    }
+    cal = AddToCalendar::URLs.new(event_attributes)
+
+    rn_newline = cal.send(:url_encode_ical, "rn\r\nnewline")
+    assert rn_newline == "rn\\nnewline"
   end
 
 end

@@ -95,8 +95,8 @@ module AddToCalendar
     end
 
     def ical_url
-      # Downloads a *.ics file provided as a data:text href
-      # Eg. data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART=20200610T123000Z%0ADTEND=20200610T133000Z%0ASUMMARY=Holly%27s%208th%20Birthday%21%0AURL=https%3A%2F%2Fwww.example.com%2Fevent-details%0ADESCRIPTION=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21\n\nhttps%3A%2F%2Fwww.example.com%2Fevent-details%0ALOCATION=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU%0AUID=-https%3A%2F%2Fwww.example.com%2Fevent-details%0AEND:VEVENT%0AEND:VCALENDAR
+      # Downloads a *.ics file provided as a data-uri
+      # Eg. "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20200512T123000Z%0ADTEND:20200512T160000Z%0ASUMMARY:Holly%27s%208th%20Birthday%21%0AURL:https%3A%2F%2Fwww.example.com%2Fevent-details%0ADESCRIPTION:Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21\\n\\nhttps%3A%2F%2Fwww.example.com%2Fevent-details%0ALOCATION:Flat%204%5C%2C%20The%20Edge%5C%2C%2038%20Smith-Dorrien%20St%5C%2C%20London%5C%2C%20N1%207GU%0AUID:-https%3A%2F%2Fwww.example.com%2Fevent-details%0AEND:VEVENT%0AEND:VCALENDAR"
       calendar_url = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT"
       params = {}
       params[:DTSTART] = utc_datetime(start_datetime)
@@ -105,9 +105,9 @@ module AddToCalendar
       else
         params[:DTEND] = utc_datetime(start_datetime + 60*60) # 1 hour later
       end
-      params[:SUMMARY] = url_encode(title)
+      params[:SUMMARY] = url_encode_ical(title)
       params[:URL] = url_encode(url) if url
-      params[:DESCRIPTION] = url_encode_ical_description(description) if description
+      params[:DESCRIPTION] = url_encode_ical(description) if description
       if add_url_to_description && url
         if params[:DESCRIPTION]
           params[:DESCRIPTION] << "\\n\\n#{url_encode(url)}"
@@ -115,9 +115,9 @@ module AddToCalendar
           params[:DESCRIPTION] = url_encode(url)
         end
       end
-      params[:LOCATION] = url_encode(location) if location
+      params[:LOCATION] = url_encode_ical(location) if location
       params[:UID] = "-#{url_encode(url)}" if url
-      params[:UID] = "-#{utc_datetime(start_datetime)}-#{url_encode(title)}" unless params[:UID] # set uid based on starttime and title only if url is unavailable
+      params[:UID] = "-#{utc_datetime(start_datetime)}-#{url_encode_ical(title)}" unless params[:UID] # set uid based on starttime and title only if url is unavailable
       
       new_line = "%0A"
       params.each do |key, value|
@@ -239,12 +239,17 @@ module AddToCalendar
         string.gsub(/(?:\n\r?|\r\n?)/, '<br>')
       end
 
-      def url_encode_ical_description(description)
-        description.split("\n").map { |e| 
-          if e == "\n"
-            "\\n"
+      def url_encode_ical(string)
+        # per https://tools.ietf.org/html/rfc5545#section-3.3.11
+        string.gsub!("\\", "\\\\\\") # \ >> \\     --yes, really: https://stackoverflow.com/questions/6209480/how-to-replace-backslash-with-double-backslash
+        string.gsub!(",", "\\,")
+        string.gsub!(";", "\\;")
+        string.gsub!("\r\n", "\n") # so can handle all newlines the same
+        string.split("\n").map { |e|
+          if e.empty?
+            e
           else
-            url_encode(e) if e != "\n" 
+            url_encode(e)
           end
         }.join("\\n")
       end

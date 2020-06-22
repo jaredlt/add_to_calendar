@@ -104,11 +104,12 @@ cal = AddToCalendar::URLs.new(event_attributes)
 
 - Offset values eg. "2020-05-13 15:31:00 **+05:00**" are ignored. It is only important that you have the correct date and time numbers set. The timezone is set directly using its own attribute `timezone`.
 - You must set a timezone so that when users add the event to their calendar it shows at their correct local time. 
-  - Eg. London event @ `2020-05-13 13:30:00` will save in a New Yorkers calendar as local time `2020-05-13 17:30:00`
+  - Eg. London event @ `2020-05-13 13:30:00` will save in a New Yorker's calendar as local time `2020-05-13 17:30:00`
 
 ### Browser support
 
-- IE11 and lower will not work for `ical_url`, `apple_url` and `outlook_url` (IE does not properly support [data-uri links](https://caniuse.com/#feat=datauri). See [#16](https://github.com/jaredlt/add_to_calendar/issues/16)). 
+- IE11 and lower will not work for `ical_url`, `apple_url` and `outlook_url` (IE does not properly support [data-uri links](https://caniuse.com/#feat=datauri). See [#16](https://github.com/jaredlt/add_to_calendar/issues/16)).
+- IE11 will also not work with `Yahoo`, but this is because Yahoo only offers a simplified interface for IE11 which does not work with the add event URL.
 
 ### More details
 
