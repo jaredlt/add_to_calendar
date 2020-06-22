@@ -119,6 +119,10 @@ cal = AddToCalendar::URLs.new(event_attributes)
 
 I couldn't find an approriate gem or javascript library that did exactly what I wanted. So I decided to scratch my own itch to solve a problem for a startup I'm working on: https://www.littlefutures.org
 
+## Releases
+
+- https://rubygems.org/gems/add_to_calendar
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
