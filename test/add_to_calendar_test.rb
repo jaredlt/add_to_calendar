@@ -8,6 +8,11 @@ class AddToCalendarTest < Minitest::Test
     @next_month_year = next_month.strftime('%Y')
     @next_month_month = next_month.strftime('%m')
     @next_month_day = next_month.strftime('%d')
+    
+    next_month_day_after = (next_month + 60*60*24)
+    @next_month_next_year = next_month_day_after.strftime('%Y')
+    @next_month_next_month = next_month_day_after.strftime('%m')
+    @next_month_next_day = next_month_day_after.strftime('%d')
 
     @title = "Holly's 8th Birthday!"
     @timezone = "Europe/London"
@@ -115,7 +120,7 @@ class AddToCalendarTest < Minitest::Test
   def test_duration_seconds_more_than_a_day
     cal = AddToCalendar::URLs.new(
       start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
-      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day.to_i+1,17,00,00,0), 
+      end_datetime: Time.new(@next_month_next_year,@next_month_next_month,@next_month_next_day,17,00,00,0), 
       title: @title, 
       timezone: @timezone
     )
@@ -138,12 +143,13 @@ class AddToCalendarTest < Minitest::Test
   def test_seconds_to_hours_minutes_more_than_a_day
     cal = AddToCalendar::URLs.new(
       start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
-      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day.to_i+1,17,00,00,0), 
+      end_datetime: Time.new(@next_month_next_year,@next_month_next_month,@next_month_next_day,17,00,00,0), 
       title: @title, 
       timezone: @timezone
     )
     duration_seconds = cal.send(:duration_seconds, cal.start_datetime, cal.end_datetime)
     duration = cal.send(:seconds_to_hours_minutes, duration_seconds)
+
     assert duration == "2730"
   end
 
