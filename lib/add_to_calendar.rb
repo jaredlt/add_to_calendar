@@ -136,6 +136,10 @@ module AddToCalendar
     def outlook_url
       ical_url
     end
+
+    def android_url
+      ical_url
+    end
   
     private
       def validate_attributes
@@ -169,7 +173,7 @@ module AddToCalendar
           raise MicrosoftServiceError, ":service must be 'outlook.com' or 'office365'. '#{service}' given"
         end
         params = {}
-        params[:subject] = url_encode(title)
+        params[:subject] = url_encode(title.gsub(' & ', ' and '))
         params[:startdt] = utc_datetime_microsoft(start_datetime)
         if end_datetime
           params[:enddt] = utc_datetime_microsoft(end_datetime)

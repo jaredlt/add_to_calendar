@@ -1,6 +1,6 @@
 # AddToCalendar
 
-A ruby gem to generate 'Add To Calendar' URLs for Apple, Google, Office 365, Outlook, Outlook.com and Yahoo calendars.
+A ruby gem to generate 'Add To Calendar' URLs for Android, Apple, Google, Office 365, Outlook, Outlook.com and Yahoo calendars.
 
 If this gem brings you some value feel free to buy me a coffee :) [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P71PK9T)
 
@@ -52,12 +52,7 @@ Or install it yourself as:
 @cal.ical_url
 #=> "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20201212T133000Z%0ADTEND:20201212T143000Z%0ASUMMARY:Christmas%20party%21%0AUID:-20201212T133000Z-Christmas%20party%21%0AEND:VEVENT%0AEND:VCALENDAR"
 
-# apple_url and outlook_url are simply helper methods that call ical_url
-@cal.apple_url
-#=> "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20201212T133000Z%0ADTEND:20201212T143000Z%0ASUMMARY:Christmas%20party%21%0AUID:-20201212T133000Z-Christmas%20party%21%0AEND:VEVENT%0AEND:VCALENDAR"
-
-@cal.outlook_url
-#=> "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20201212T133000Z%0ADTEND:20201212T143000Z%0ASUMMARY:Christmas%20party%21%0AUID:-20201212T133000Z-Christmas%20party%21%0AEND:VEVENT%0AEND:VCALENDAR"
+# android_url, apple_url and outlook_url are simply helper methods that call ical_url and return the same string.
 ```
 
 ### Creating HTML links
@@ -68,7 +63,7 @@ Or install it yourself as:
 
 <a href="<%= @cal.yahoo_url %>">Add to Yahoo Calendar</a>
 
-<!-- for ical_url, apple_url and outlook_url you can set the filename like so -->
+<!-- for ical_url, android_url, apple_url and outlook_url you can set the filename like so -->
 <a download="calendar-event.ics" href="<%= @cal.ical_url %>">Download iCal</a>
 ```
 
@@ -109,7 +104,8 @@ cal = AddToCalendar::URLs.new(event_attributes)
 ### Browser support
 
 - IE11 and lower will not work for `ical_url`, `apple_url` and `outlook_url` (IE does not properly support [data-uri links](https://caniuse.com/#feat=datauri). See [#16](https://github.com/jaredlt/add_to_calendar/issues/16)).
-- IE11 will also not work with `Yahoo`, but this is because Yahoo only offers a simplified interface for IE11 which does not work with the add event URL.
+- IE11 will also not work with `Yahoo`, but this is because Yahoo  is deprecating IE 11 support and only offers a simplified interface which does not work with the add event URL.
+- `Office 365` and `Outlook.com` do not work on mobile. This seems to be an issue on Microsoft's side. Their mobile web interface does not support the 'create event' URLs and the links do not open the apps if you have them installed.
 
 ### More details
 

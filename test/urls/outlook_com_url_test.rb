@@ -139,5 +139,24 @@ class OutlookComUrlTest < Minitest::Test
                                  "&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%3Cbr%3E%3Cbr%3Ehttps%3A%2F%2Fwww.example.com%2Fevent-details" + 
                                  "&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU"
   end
+
+  def test_subject_converts_ampersand_to_and
+    # Outlook.com and Office 365 render `&` as `&amp;` in the Subject field
+    # event though the `&` is correctly percent-encoded to `%26`
+    # This appears to be a Microsoft sanitizer bug
+    # ref: https://github.com/jaredlt/add_to_calendar/issues/36
+    # The only workaround is to detect and replace `&` with `and`
+    # NB. The Body field renders & correctly so this workaround only applies to the Subject
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour,@minute,@second), 
+      title: "Birthday & Sleepover", 
+      timezone: @timezone
+    )
+
+    assert cal.outlook_com_url == "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
+                                  "&subject=Birthday%20and%20Sleepover" +
+                                  "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T12:30:00Z" + 
+                                  "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T13:30:00Z"
+  end
   
 end
