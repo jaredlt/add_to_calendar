@@ -9,7 +9,7 @@ require 'date'
 require 'uri'
 # require 'pry'
 
-module AddToCalendar
+module AddToCalendarLinks
   class Error < StandardError; end
   
   class URLs

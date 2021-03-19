@@ -1,16 +1,16 @@
 lib = File.expand_path("lib", __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "add_to_calendar/version"
+require "add_to_calendar_links/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "add_to_calendar"
-  spec.version       = AddToCalendar::VERSION
+  spec.name          = "add_to_calendar_links"
+  spec.version       = AddToCalendarLinks::VERSION
   spec.authors       = ["Jared Turner", "James Watling"]
   spec.email         = ["jaredlt01@gmail.com", "watling.james@gmail.com"]
 
   spec.summary       = "Generate 'Add To Calendar' URLs for Android, Apple, Google, Office 365, Outlook, Outlook.com and Yahoo calendars"
   # spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "https://github.com/jaredlt/add_to_calendar"
+  spec.homepage      = "https://github.com/JamesWatling/add_to_calendar"
   spec.license       = "MIT"
 
   spec.metadata["homepage_uri"] = spec.homepage
