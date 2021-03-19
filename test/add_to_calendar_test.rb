@@ -199,7 +199,6 @@ class AddToCalendarTest < Minitest::Test
 
     string_with_newlines = cal.send(:url_encode_ical, "string\nwith\n\nnewlines")
     assert string_with_newlines == "string\\nwith\\n\\nnewlines"
-
   end
 
   def test_ical_escapes_special_characters
@@ -225,6 +224,35 @@ class AddToCalendarTest < Minitest::Test
 
     semicolon = cal.send(:url_encode_ical, "Ruby;Rails")
     assert semicolon == "Ruby%5C%3BRails" # url_encoded `\;` where %3B == ;
+  end
+
+  def test_url_encode_ical_removes_html
+    event_attributes = {
+      start_datetime: Time.new(2020,12,12,9,00,00,0),
+      end_datetime: Time.new(2020,12,12,17,00,00,0),
+      title: "Ruby Conference; Rails Conference",
+      timezone: 'America/New_York',
+      description: 'Join us to <b>learn</b> all about <img />Ruby \\ <div>Rails.</div>',
+      strip_html: false
+    }
+    cal = AddToCalendar::URLs.new(**event_attributes)
+
+    description_encoded = cal.send(:url_encode_ical, event_attributes[:description], strip_html: true)
+    assert description_encoded == "Join%20us%20to%20learn%20all%20about%20Ruby%20%5C%5C%20Rails." 
+  end
+
+  def test_ical_doesnt_remove_html_by_default
+    event_attributes = {
+      start_datetime: Time.new(2020,12,12,9,00,00,0),
+      end_datetime: Time.new(2020,12,12,17,00,00,0),
+      title: "Ruby Conference; Rails Conference",
+      timezone: 'America/New_York',
+      description: 'Join us to <b>learn</b> all about <img />Ruby \\ <div>Rails.</div>'
+    }
+    cal = AddToCalendar::URLs.new(**event_attributes)
+
+    description_encoded = cal.send(:url_encode_ical, event_attributes[:description])
+    assert description_encoded == "Join%20us%20to%20%3Cb%3Elearn%3C%2Fb%3E%20all%20about%20%3Cimg%20%2F%3ERuby%20%5C%5C%20%3Cdiv%3ERails.%3C%2Fdiv%3E" 
   end
 
   def test_rn_newline_should_be_detected_converted_and_escaped

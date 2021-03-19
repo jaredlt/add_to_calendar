@@ -6,15 +6,15 @@ require "erb"
 include ERB::Util
 require 'tzinfo'
 require 'date'
+require 'uri'
 # require 'pry'
-
 
 module AddToCalendar
   class Error < StandardError; end
   
   class URLs
-    attr_accessor :start_datetime, :end_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description
-    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true)
+    attr_accessor :start_datetime, :end_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description, :organizer, :strip_html
+    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true, organizer: nil, strip_html: false)
       @start_datetime = start_datetime
       @end_datetime = end_datetime
       @title = title
@@ -23,7 +23,8 @@ module AddToCalendar
       @url = url
       @description = description
       @add_url_to_description = add_url_to_description
-  
+      @organizer = URI.parse(organizer) if organizer
+      @strip_html = strip_html
       validate_attributes
     end
   
@@ -105,9 +106,9 @@ module AddToCalendar
       else
         params[:DTEND] = utc_datetime(start_datetime + 60*60) # 1 hour later
       end
-      params[:SUMMARY] = url_encode_ical(title)
+      params[:SUMMARY] = url_encode_ical(title, strip_html: true) #ical doesnt support html so remove all markup. Optional for other formats
       params[:URL] = url_encode(url) if url
-      params[:DESCRIPTION] = url_encode_ical(description) if description
+      params[:DESCRIPTION] = url_encode_ical(description, strip_html: true) if description
       if add_url_to_description && url
         if params[:DESCRIPTION]
           params[:DESCRIPTION] << "\\n\\n#{url_encode(url)}"
@@ -118,7 +119,8 @@ module AddToCalendar
       params[:LOCATION] = url_encode_ical(location) if location
       params[:UID] = "-#{url_encode(url)}" if url
       params[:UID] = "-#{utc_datetime(start_datetime)}-#{url_encode_ical(title)}" unless params[:UID] # set uid based on starttime and title only if url is unavailable
-      
+      params[:organizer] = organizer if organizer
+
       new_line = "%0A"
       params.each do |key, value|
         calendar_url << "#{new_line}#{key}:#{value}"
@@ -161,17 +163,23 @@ module AddToCalendar
         if description
           raise(ArgumentError, ":description must be a string") unless self.description.kind_of? String
         end
+
+        if organizer
+          raise(ArgumentError, ":organizer must be a string") unless self.organizer.kind_of? String
+        end
       end
 
       def microsoft(service)
         # Eg. 
-        if service == "outlook.com"
-          calendar_url = "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent"
-        elsif service == "office365"
-          calendar_url = "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent"
+        calendar_url = case service
+        when "outlook.com"
+          "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent"
+        when "office365"
+          "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent"
         else
           raise MicrosoftServiceError, ":service must be 'outlook.com' or 'office365'. '#{service}' given"
         end
+
         params = {}
         params[:subject] = url_encode(title.gsub(' & ', ' and '))
         params[:startdt] = utc_datetime_microsoft(start_datetime)
@@ -243,9 +251,11 @@ module AddToCalendar
         string.gsub(/(?:\n\r?|\r\n?)/, '<br>')
       end
 
-      def url_encode_ical(s)
+      def url_encode_ical(s, strip_html: @strip_html)
         # per https://tools.ietf.org/html/rfc5545#section-3.3.11
         string = s.dup # don't modify original input
+
+        string = strip_html_tags(string) if strip_html
         string.gsub!("\\", "\\\\\\") # \ >> \\     --yes, really: https://stackoverflow.com/questions/6209480/how-to-replace-backslash-with-double-backslash
         string.gsub!(",", "\\,")
         string.gsub!(";", "\\;")
@@ -257,6 +267,10 @@ module AddToCalendar
             url_encode(e)
           end
         }.join("\\n")
+      end
+
+      def strip_html_tags(description)
+        description.dup.gsub(/<\/?[^>]*>/, "")
       end
   end
 end
