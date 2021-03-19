@@ -189,7 +189,7 @@ class AddToCalendarTest < Minitest::Test
       description: "Join us to learn\n\nall about Ruby.",
       add_url_to_description: true # defaults to true
     }
-    cal = AddToCalendar::URLs.new(event_attributes)
+    cal = AddToCalendar::URLs.new(**event_attributes)
 
     string_without_newlines = cal.send(:url_encode_ical, "string without newlines")
     assert string_without_newlines == "string%20without%20newlines"
@@ -215,7 +215,7 @@ class AddToCalendarTest < Minitest::Test
       description: "Join us to learn all about Ruby \\ Rails.",
       add_url_to_description: true # defaults to true
     }
-    cal = AddToCalendar::URLs.new(event_attributes)
+    cal = AddToCalendar::URLs.new(**event_attributes)
 
     backslash = cal.send(:url_encode_ical, "Ruby\\Rails")
     assert backslash == "Ruby%5C%5CRails" # url_encoded `\\`` where %5C == \
@@ -239,7 +239,7 @@ class AddToCalendarTest < Minitest::Test
       description: "Join us to learn all about Ruby \\ Rails.",
       add_url_to_description: true # defaults to true
     }
-    cal = AddToCalendar::URLs.new(event_attributes)
+    cal = AddToCalendar::URLs.new(**event_attributes)
 
     rn_newline = cal.send(:url_encode_ical, "rn\r\nnewline")
     assert rn_newline == "rn\\nnewline"
@@ -256,7 +256,7 @@ class AddToCalendarTest < Minitest::Test
       description: "Join us to learn\nall about Ruby \\ Rails.",
       add_url_to_description: true # defaults to true
     }
-    cal = AddToCalendar::URLs.new(event_attributes)
+    cal = AddToCalendar::URLs.new(**event_attributes)
     cal.apple_url
     assert cal.location == "20 W 34th St, New York, NY 10001"
     assert cal.location != "20 W 34th St\\, New York\\, NY 10001" # to show what it shouldn't look like
