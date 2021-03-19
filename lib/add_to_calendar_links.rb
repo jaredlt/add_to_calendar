@@ -1,4 +1,4 @@
-require "add_to_calendar/version"
+require "add_to_calendar_links/version"
 
 # erb util needed for url_encode method
 # CGI::escape uses + instead of %20 which doesn't work for ical files
@@ -255,7 +255,12 @@ module AddToCalendarLinks
         # per https://tools.ietf.org/html/rfc5545#section-3.3.11
         string = s.dup # don't modify original input
 
-        string = strip_html_tags(string) if strip_html
+        if strip_html
+          string.gsub!("<br>", "\n")
+          string.gsub!("<p>", "\n")
+          string.gsub!("</p>", "\n")
+          string = strip_html_tags(string)
+        end
         string.gsub!("\\", "\\\\\\") # \ >> \\     --yes, really: https://stackoverflow.com/questions/6209480/how-to-replace-backslash-with-double-backslash
         string.gsub!(",", "\\,")
         string.gsub!(";", "\\;")
