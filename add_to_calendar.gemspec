@@ -5,8 +5,8 @@ require "add_to_calendar/version"
 Gem::Specification.new do |spec|
   spec.name          = "add_to_calendar"
   spec.version       = AddToCalendar::VERSION
-  spec.authors       = ["Jared Turner"]
-  spec.email         = ["jaredlt01@gmail.com"]
+  spec.authors       = ["Jared Turner", "James Watling"]
+  spec.email         = ["jaredlt01@gmail.com", "watling.james@gmail.com"]
 
   spec.summary       = "Generate 'Add To Calendar' URLs for Android, Apple, Google, Office 365, Outlook, Outlook.com and Yahoo calendars"
   # spec.description   = %q{TODO: Write a longer description or delete this line.}
@@ -29,10 +29,10 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.0'
 
   spec.add_dependency "tzinfo", ">= 1.1", "< 3"
-  spec.add_dependency "tzinfo-data", "~> 1.2020"
+  spec.add_dependency "tzinfo-data", "~> 1.2021"
 
   spec.add_development_dependency "bundler", "~> 2.0"
-  spec.add_development_dependency "rake", "~> 13.0.1"
+  spec.add_development_dependency "rake", "~> 13.0.3"
   spec.add_development_dependency "minitest", "~> 5.0"
-  spec.add_development_dependency "pry", "~> 0.13.1"
+  spec.add_development_dependency "pry", "~> 0.14.0"
 end
