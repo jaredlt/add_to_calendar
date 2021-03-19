@@ -258,12 +258,12 @@ module AddToCalendarLinks
         if strip_html
           string.gsub!("<br>", "\n")
           string.gsub!("<p>", "\n")
-          string.gsub!("</p>", "\n")
+          string.gsub!("</p>", "\n\n")
+          string.gsub!("&amp;", "and")
+          string.gsub!("&nbsp;", " ")
           string = strip_html_tags(string)
         end
         string.gsub!("\\", "\\\\\\") # \ >> \\     --yes, really: https://stackoverflow.com/questions/6209480/how-to-replace-backslash-with-double-backslash
-        string.gsub!(",", "\\,")
-        string.gsub!(";", "\\;")
         string.gsub!("\r\n", "\n") # so can handle all newlines the same
         string.split("\n").map { |e|
           if e.empty?
@@ -271,7 +271,7 @@ module AddToCalendarLinks
           else
             url_encode(e)
           end
-        }.join("\\n")
+        }.join("\n")
       end
 
       def strip_html_tags(description)
