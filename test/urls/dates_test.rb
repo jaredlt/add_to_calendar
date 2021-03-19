@@ -13,7 +13,6 @@ class DatessTest < Minitest::Test
 
     @tz_london = "Europe/London"
     @tz_new_york = "America/New_York"
-
   end
   
   def test_utc_datetime
