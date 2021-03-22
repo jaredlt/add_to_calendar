@@ -7,7 +7,6 @@ include ERB::Util
 require 'tzinfo'
 require 'date'
 require 'uri'
-# require 'pry'
 
 module AddToCalendarLinks
   class Error < StandardError; end
