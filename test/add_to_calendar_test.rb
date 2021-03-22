@@ -1,6 +1,6 @@
 require "test_helper"
 
-class AddToCalendarTest < Minitest::Test
+class AddToCalendarLinksTest < Minitest::Test
 
   def setup
     # TODO: DRY this in test_helper to be shared across all test files
@@ -19,37 +19,37 @@ class AddToCalendarTest < Minitest::Test
   end
 
   def test_that_it_has_a_version_number
-    refute_nil ::AddToCalendar::VERSION
+    refute_nil ::AddToCalendarLinks::VERSION
   end
 
   # TODO: test all validate_attributes
 
   def test_attribute_title_must_be_string
     assert_raises(ArgumentError) do
-      AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: 1, timezone: @timezone)
+      AddToCalendarLinks::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: 1, timezone: @timezone)
     end
   end
 
   def test_attribute_title_must_not_be_blank
     assert_raises(ArgumentError) do
-      AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: " ", timezone: @timezone)
+      AddToCalendarLinks::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: " ", timezone: @timezone)
     end
   end
 
   def test_attribute_location_must_be_string
     assert_raises(ArgumentError) do
-      AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone, location: 1)
+      AddToCalendarLinks::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone, location: 1)
     end
   end
 
   def test_attribute_description_must_be_string
     assert_raises(ArgumentError) do
-      AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone, description: 1)
+      AddToCalendarLinks::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone, description: 1)
     end
   end
 
   def test_attribute_start_datetime_must_be_time
-    cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
+    cal = AddToCalendarLinks::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
     assert cal.start_datetime.class == Time
   end
 
@@ -57,25 +57,25 @@ class AddToCalendarTest < Minitest::Test
     # for now
     # update later to only allow if allday value is set
     assert_raises(ArgumentError) do
-      AddToCalendar::URLs.new(start_datetime: Date.today, title: @title, timezone: @timezone, description: 1)
+      AddToCalendarLinks::URLs.new(start_datetime: Date.today, title: @title, timezone: @timezone, description: 1)
     end
   end
 
   def test_attribute_start_datetime_invalid
     assert_raises(ArgumentError) do
-      AddToCalendar::URLs.new(start_datetime: 1, title: @title, timezone: @timezone)
+      AddToCalendarLinks::URLs.new(start_datetime: 1, title: @title, timezone: @timezone)
     end
   end
 
   def test_attribute_end_datetime_invalid
     assert_raises(ArgumentError) do
-      AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), end_datetime: 1, title: @title, timezone: @timezone)
+      AddToCalendarLinks::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), end_datetime: 1, title: @title, timezone: @timezone)
     end
   end
 
   def test_attribute_end_datetime_must_be_greater_than_start_datetime
     assert_raises(ArgumentError) do
-      AddToCalendar::URLs.new(
+      AddToCalendarLinks::URLs.new(
         start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
         end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day.to_i-1,13,30,00,0), 
         title: @title, 
@@ -86,7 +86,7 @@ class AddToCalendarTest < Minitest::Test
 
   def test_attribute_end_datetime_must_be_greater_than_start_datetime_not_equal
     assert_raises(ArgumentError) do
-      AddToCalendar::URLs.new(
+      AddToCalendarLinks::URLs.new(
         start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
         end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
         title: @title, 
@@ -96,18 +96,18 @@ class AddToCalendarTest < Minitest::Test
   end
 
   def test_format_datetime_google
-    cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
+    cal = AddToCalendarLinks::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
     formatted_datetime = cal.send(:format_date_google, Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0))
     assert formatted_datetime == "#{@next_month_year}#{@next_month_month}#{@next_month_day}T133000"
   end
 
   def test_tzinfo_object_created_successfully
-    cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
+    cal = AddToCalendarLinks::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
     assert cal.timezone.class == TZInfo::DataTimezone
   end
 
   def test_duration_seconds
-    cal = AddToCalendar::URLs.new(
+    cal = AddToCalendarLinks::URLs.new(
       start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
       end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
       title: @title, 
@@ -118,7 +118,7 @@ class AddToCalendarTest < Minitest::Test
   end
 
   def test_duration_seconds_more_than_a_day
-    cal = AddToCalendar::URLs.new(
+    cal = AddToCalendarLinks::URLs.new(
       start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
       end_datetime: Time.new(@next_month_next_year,@next_month_next_month,@next_month_next_day,17,00,00,0), 
       title: @title, 
@@ -129,7 +129,7 @@ class AddToCalendarTest < Minitest::Test
   end
   
   def test_seconds_to_hours_minutes
-    cal = AddToCalendar::URLs.new(
+    cal = AddToCalendarLinks::URLs.new(
       start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
       end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
       title: @title, 
@@ -141,7 +141,7 @@ class AddToCalendarTest < Minitest::Test
   end
 
   def test_seconds_to_hours_minutes_more_than_a_day
-    cal = AddToCalendar::URLs.new(
+    cal = AddToCalendarLinks::URLs.new(
       start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
       end_datetime: Time.new(@next_month_next_year,@next_month_next_month,@next_month_next_day,17,00,00,0), 
       title: @title, 
@@ -156,7 +156,7 @@ class AddToCalendarTest < Minitest::Test
   def test_newlines_convert_to_html_br
     # Office365 & Outlook.com don't accept newlines for multi-line bodies
     # instead we must convert them to <br> tags
-    cal = AddToCalendar::URLs.new(
+    cal = AddToCalendarLinks::URLs.new(
       start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
       end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
       title: @title, 
@@ -189,7 +189,7 @@ class AddToCalendarTest < Minitest::Test
       description: "Join us to learn\n\nall about Ruby.",
       add_url_to_description: true # defaults to true
     }
-    cal = AddToCalendar::URLs.new(**event_attributes)
+    cal = AddToCalendarLinks::URLs.new(**event_attributes)
 
     string_without_newlines = cal.send(:url_encode_ical, "string without newlines")
     assert string_without_newlines == "string%20without%20newlines"
@@ -214,7 +214,7 @@ class AddToCalendarTest < Minitest::Test
       description: "Join us to learn all about Ruby \\ Rails.",
       add_url_to_description: true # defaults to true
     }
-    cal = AddToCalendar::URLs.new(**event_attributes)
+    cal = AddToCalendarLinks::URLs.new(**event_attributes)
 
     backslash = cal.send(:url_encode_ical, "Ruby\\Rails")
     assert backslash == "Ruby%5C%5CRails" # url_encoded `\\`` where %5C == \
@@ -235,7 +235,7 @@ class AddToCalendarTest < Minitest::Test
       description: 'Join us to <b>learn</b> all about <img />Ruby \\ <div>Rails.</div>',
       strip_html: false
     }
-    cal = AddToCalendar::URLs.new(**event_attributes)
+    cal = AddToCalendarLinks::URLs.new(**event_attributes)
 
     description_encoded = cal.send(:url_encode_ical, event_attributes[:description], strip_html: true)
     assert description_encoded == "Join%20us%20to%20learn%20all%20about%20Ruby%20%5C%5C%20Rails." 
@@ -249,7 +249,7 @@ class AddToCalendarTest < Minitest::Test
       timezone: 'America/New_York',
       description: 'Join us to <b>learn</b> all about <img />Ruby \\ <div>Rails.</div>'
     }
-    cal = AddToCalendar::URLs.new(**event_attributes)
+    cal = AddToCalendarLinks::URLs.new(**event_attributes)
 
     description_encoded = cal.send(:url_encode_ical, event_attributes[:description])
     assert description_encoded == "Join%20us%20to%20%3Cb%3Elearn%3C%2Fb%3E%20all%20about%20%3Cimg%20%2F%3ERuby%20%5C%5C%20%3Cdiv%3ERails.%3C%2Fdiv%3E" 
@@ -267,7 +267,7 @@ class AddToCalendarTest < Minitest::Test
       description: "Join us to learn all about Ruby \\ Rails.",
       add_url_to_description: true # defaults to true
     }
-    cal = AddToCalendar::URLs.new(**event_attributes)
+    cal = AddToCalendarLinks::URLs.new(**event_attributes)
 
     rn_newline = cal.send(:url_encode_ical, "rn\r\nnewline")
     assert rn_newline == "rn\\nnewline"
@@ -284,7 +284,7 @@ class AddToCalendarTest < Minitest::Test
       description: "Join us to learn\nall about Ruby \\ Rails.",
       add_url_to_description: true # defaults to true
     }
-    cal = AddToCalendar::URLs.new(**event_attributes)
+    cal = AddToCalendarLinks::URLs.new(**event_attributes)
     cal.apple_url
     assert cal.location == "20 W 34th St, New York, NY 10001"
     assert cal.location != "20 W 34th St\\, New York\\, NY 10001" # to show what it shouldn't look like

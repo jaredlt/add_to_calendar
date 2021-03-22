@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    add_to_calendar (0.2.5)
+    add_to_calendar_links (0.3.1)
       tzinfo (>= 1.1, < 3)
       tzinfo-data (~> 1.2021)
 
@@ -25,7 +25,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  add_to_calendar!
+  add_to_calendar_links!
   bundler (~> 2.0)
   minitest (~> 5.0)
   pry (~> 0.14.0)

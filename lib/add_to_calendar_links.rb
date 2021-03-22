@@ -1,4 +1,4 @@
-require "add_to_calendar/version"
+require "add_to_calendar_links/version"
 
 # erb util needed for url_encode method
 # CGI::escape uses + instead of %20 which doesn't work for ical files
@@ -7,9 +7,8 @@ include ERB::Util
 require 'tzinfo'
 require 'date'
 require 'uri'
-# require 'pry'
 
-module AddToCalendar
+module AddToCalendarLinks
   class Error < StandardError; end
   
   class URLs
@@ -255,10 +254,15 @@ module AddToCalendar
         # per https://tools.ietf.org/html/rfc5545#section-3.3.11
         string = s.dup # don't modify original input
 
-        string = strip_html_tags(string) if strip_html
+        if strip_html
+          string.gsub!("<br>", "\n")
+          string.gsub!("<p>", "\n")
+          string.gsub!("</p>", "\n\n")
+          string.gsub!("&amp;", "and")
+          string.gsub!("&nbsp;", " ")
+          string = strip_html_tags(string)
+        end
         string.gsub!("\\", "\\\\\\") # \ >> \\     --yes, really: https://stackoverflow.com/questions/6209480/how-to-replace-backslash-with-double-backslash
-        string.gsub!(",", "\\,")
-        string.gsub!(";", "\\;")
         string.gsub!("\r\n", "\n") # so can handle all newlines the same
         string.split("\n").map { |e|
           if e.empty?
@@ -266,7 +270,7 @@ module AddToCalendar
           else
             url_encode(e)
           end
-        }.join("\\n")
+        }.join("\n")
       end
 
       def strip_html_tags(description)
