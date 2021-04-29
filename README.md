@@ -78,7 +78,8 @@ event_attributes = {
     location: "20 W 34th St, New York, NY 10001", 
     url: "https://www.ruby-lang.org/en/",
     description: "Join us to learn all about Ruby.",
-    add_url_to_description: true # defaults to true
+    add_url_to_description: true, # defaults to true
+    rrule: 'FREQ=MONTHLY;COUNT=3' # supported only for google and ical urls
 }
 
 cal = AddToCalendar::URLs.new(event_attributes)
@@ -94,6 +95,7 @@ cal = AddToCalendar::URLs.new(event_attributes)
 | url                    | No        | String     | Most providers do not have a native URL field. If you set `url` it will be added to the end of the description field (see `add_url_to_description`) |
 | description            | No        | String     | Accepts newlines by passing `\n` Eg. `"Join us for fun & drinks\n\nPS. Smart casual"` |
 | add_url_to_description | No        | true/false | defaults to `true`. Set `add_url_to_description: false` to stop the URL from being added to the description |
+| rrule                  | No        | String     | Must be in [RFC-5545](https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html) format Eg. `"FREQ=MONTHLY;COUNT=3"` |
 
 ### Timezones and offsets
 

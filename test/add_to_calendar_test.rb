@@ -48,6 +48,12 @@ class AddToCalendarTest < Minitest::Test
     end
   end
 
+  def test_attribute_rrule_must_be_string
+    assert_raises(ArgumentError) do
+      AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone, rrule: 1)
+    end
+  end
+
   def test_attribute_start_datetime_must_be_time
     cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
     assert cal.start_datetime.class == Time

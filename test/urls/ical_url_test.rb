@@ -145,5 +145,11 @@ class IcalUrlTest < Minitest::Test
                            uid + 
                            @url_end
   end
-  
+
+  def test_with_rrule
+    rrule = "FREQ=MONTHLY;COUNT=3;BYMONTHDAY=#{@next_month_day}"
+    cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone, rrule: rrule)
+    uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
+    assert cal.ical_url == @url_with_defaults_required + "%0ARRULE:FREQ=MONTHLY;COUNT=3;BYMONTHDAY=#{@next_month_day}" + uid + @url_end
+  end
 end

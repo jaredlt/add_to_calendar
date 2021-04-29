@@ -13,8 +13,8 @@ module AddToCalendar
   class Error < StandardError; end
   
   class URLs
-    attr_accessor :start_datetime, :end_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description
-    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true)
+    attr_accessor :start_datetime, :end_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description, :rrule
+    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true, rrule: nil)
       @start_datetime = start_datetime
       @end_datetime = end_datetime
       @title = title
@@ -23,6 +23,7 @@ module AddToCalendar
       @url = url
       @description = description
       @add_url_to_description = add_url_to_description
+      @rrule = rrule
   
       validate_attributes
     end
@@ -47,7 +48,9 @@ module AddToCalendar
           params[:details] = url_encode(url)
         end
       end
-  
+
+      params[:recur] = "RRULE:#{rrule}" if rrule
+
       params.each do |key, value|
         calendar_url << "&#{key}=#{value}"
       end
@@ -116,6 +119,7 @@ module AddToCalendar
         end
       end
       params[:LOCATION] = url_encode_ical(location) if location
+      params[:RRULE] = rrule if rrule
       params[:UID] = "-#{url_encode(url)}" if url
       params[:UID] = "-#{utc_datetime(start_datetime)}-#{url_encode_ical(title)}" unless params[:UID] # set uid based on starttime and title only if url is unavailable
       
@@ -160,6 +164,10 @@ module AddToCalendar
 
         if description
           raise(ArgumentError, ":description must be a string") unless self.description.kind_of? String
+        end
+
+        if rrule
+          raise(ArgumentError, ":rrule must be a string") unless self.rrule.kind_of? String
         end
       end
 
