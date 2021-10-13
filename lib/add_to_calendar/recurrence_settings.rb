@@ -59,7 +59,7 @@ module AddToCalendar
       end
     end
 
-    # REND is depricated and currently no way to send recurrence settings
+    # RPAT is depricated and currently no way to send recurrence settings
     def to_yahoo
       return ''
       #   # REND – the end date & time. This is represented by the total number of seconds since 1/1/1970 12:00:00 AM.
