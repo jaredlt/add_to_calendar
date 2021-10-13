@@ -1,5 +1,5 @@
 require "add_to_calendar/version"
-
+require 'add_to_calendar/recurrence_settings'
 # erb util needed for url_encode method
 # CGI::escape uses + instead of %20 which doesn't work for ical files
 require "erb"
@@ -11,10 +11,12 @@ require 'date'
 
 module AddToCalendar
   class Error < StandardError; end
-  
+
   class URLs
     attr_accessor :start_datetime, :end_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description
-    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true)
+    attr_reader :recurrence_settings
+
+    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true, recurrence: {})
       @start_datetime = start_datetime
       @end_datetime = end_datetime
       @title = title
@@ -23,6 +25,8 @@ module AddToCalendar
       @url = url
       @description = description
       @add_url_to_description = add_url_to_description
+
+      @recurrence_settings = RecurrenceSettings.new recurrence || {}
   
       validate_attributes
     end
@@ -47,7 +51,9 @@ module AddToCalendar
           params[:details] = url_encode(url)
         end
       end
-  
+
+      params[:recur] = recurrence_settings.to_rrule unless recurrence_settings.to_rrule.empty?
+
       params.each do |key, value|
         calendar_url << "&#{key}=#{value}"
       end
@@ -77,10 +83,12 @@ module AddToCalendar
       end
       params[:in_loc] = url_encode(location) if location
 
+      params.merge!(recurrence_settings.to_yahoo) unless recurrence_settings.to_yahoo.empty?
+
       params.each do |key, value|
         calendar_url << "&#{key}=#{value}"
       end
-  
+
       return calendar_url
     end
 
@@ -116,6 +124,7 @@ module AddToCalendar
         end
       end
       params[:LOCATION] = url_encode_ical(location) if location
+      params[:RRULE] = recurrence_settings.to_rrule('') unless recurrence_settings.to_rrule.empty?
       params[:UID] = "-#{url_encode(url)}" if url
       params[:UID] = "-#{utc_datetime(start_datetime)}-#{url_encode_ical(title)}" unless params[:UID] # set uid based on starttime and title only if url is unavailable
       

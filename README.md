@@ -78,7 +78,13 @@ event_attributes = {
     location: "20 W 34th St, New York, NY 10001", 
     url: "https://www.ruby-lang.org/en/",
     description: "Join us to learn all about Ruby.",
-    add_url_to_description: true # defaults to true
+    add_url_to_description: true, # defaults to true
+    recurrence: {
+      freq: 'weekly',
+      interval: 1,
+      count: 3,
+      byday: [3, 2, 1]
+    }
 }
 
 cal = AddToCalendar::URLs.new(event_attributes)
@@ -94,6 +100,7 @@ cal = AddToCalendar::URLs.new(event_attributes)
 | url                    | No        | String     | Most providers do not have a native URL field. If you set `url` it will be added to the end of the description field (see `add_url_to_description`) |
 | description            | No        | String     | Accepts newlines by passing `\n` Eg. `"Join us for fun & drinks\n\nPS. Smart casual"` |
 | add_url_to_description | No        | true/false | defaults to `true`. Set `add_url_to_description: false` to stop the URL from being added to the description |
+| recurrence             | No        | Hash       | more info in add_to_calendar/recurrence_settings.rb and examples/tests in test/recurrence_settings_test.rb
 
 ### Timezones and offsets
 
