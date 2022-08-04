@@ -13,10 +13,10 @@ module AddToCalendar
   class Error < StandardError; end
 
   class URLs
-    attr_accessor :start_datetime, :end_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description
+    attr_accessor :start_datetime, :end_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description, :uid
     attr_reader :recurrence_settings
 
-    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true, recurrence: {})
+    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true, recurrence: {}, uid: nil)
       @start_datetime = start_datetime
       @end_datetime = end_datetime
       @title = title
@@ -25,6 +25,7 @@ module AddToCalendar
       @url = url
       @description = description
       @add_url_to_description = add_url_to_description
+      @uid = uid
 
       @recurrence_settings = RecurrenceSettings.new recurrence || {}
   
@@ -125,9 +126,11 @@ module AddToCalendar
       end
       params[:LOCATION] = url_encode_ical(location) if location
       params[:RRULE] = recurrence_settings.to_rrule('') unless recurrence_settings.to_rrule.empty?
-      params[:UID] = "-#{url_encode(url)}" if url
-      params[:UID] = "-#{utc_datetime(start_datetime)}-#{url_encode_ical(title)}" unless params[:UID] # set uid based on starttime and title only if url is unavailable
-      
+
+      params[:UID]   = uid
+      params[:UID] ||= "-#{url_encode(url)}" if url
+      params[:UID] ||= "-#{utc_datetime(start_datetime)}-#{url_encode_ical(title)}" # set uid based on starttime and title
+
       new_line = "%0A"
       params.each do |key, value|
         calendar_url << "#{new_line}#{key}:#{value}"
