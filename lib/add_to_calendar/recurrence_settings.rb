@@ -105,7 +105,10 @@ module AddToCalendar
 
         return '' if res.empty?
 
-        "#{prefix}#{res.sort_by { |k, _v| k }.join(';')}"
+        # Removed sorting by key,
+        # lets keep sorting as in constant RRULES_ATTRS,
+        # Apple want FREQ on the first place, not sure about other params
+        "#{prefix}#{res.join(';')}"
       end
     end
 
