@@ -81,7 +81,7 @@ event_attributes = {
     add_url_to_description: true # defaults to true
 }
 
-cal = AddToCalendar::URLs.new(event_attributes)
+cal = AddToCalendar::URLs.new(**event_attributes)
 ```
 
 | Attribute              | Required? | Class      | Notes |
