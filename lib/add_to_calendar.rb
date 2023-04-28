@@ -13,8 +13,8 @@ module AddToCalendar
   class Error < StandardError; end
   
   class URLs
-    attr_accessor :start_datetime, :end_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description
-    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true)
+    attr_accessor :start_datetime, :end_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description, :all_day
+    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true, all_day: false)
       @start_datetime = start_datetime
       @end_datetime = end_datetime
       @title = title
@@ -23,6 +23,7 @@ module AddToCalendar
       @url = url
       @description = description
       @add_url_to_description = add_url_to_description
+      @all_day = all_day
   
       validate_attributes
     end
@@ -32,11 +33,7 @@ module AddToCalendar
       calendar_url = "https://www.google.com/calendar/render?action=TEMPLATE"
       params = {}
       params[:text] = url_encode(title)
-      if end_datetime
-        params[:dates] = "#{format_date_google(start_datetime)}/#{format_date_google(end_datetime)}"
-      else
-        params[:dates] = "#{format_date_google(start_datetime)}/#{format_date_google(start_datetime + 60*60)}" # end time is 1 hour later
-      end
+      params[:dates] = google_dates(start_datetime, end_datetime, all_day)
       params[:ctz] = timezone.identifier
       params[:location] = url_encode(location) if location
       params[:details] = url_encode(description) if description
@@ -226,9 +223,28 @@ module AddToCalendar
 
         return t.strftime('%Y-%m-%dT%H:%M:%SZ')
       end
+
+      def google_dates(start_datetime, end_datetime, all_day)
+        one_day = 1 * 24 * 60 * 60
+        if all_day
+          if end_datetime
+            "#{format_date_google(start_datetime)}/#{format_date_google(end_datetime + one_day)}"
+          else
+            "#{format_date_google(start_datetime)}/#{format_date_google(start_datetime + one_day)}"
+          end
+        elsif end_datetime
+          "#{format_datetime_google(start_datetime)}/#{format_datetime_google(end_datetime)}"
+        else
+          "#{format_datetime_google(start_datetime)}/#{format_datetime_google(start_datetime + 60*60)}" # end time is 1 hour later
+        end
+      end
   
-      def format_date_google(start_datetime)
+      def format_datetime_google(start_datetime)
         start_datetime.strftime('%Y%m%dT%H%M%S')
+      end
+
+      def format_date_google(start_datetime)
+        start_datetime.strftime('%Y%m%d')
       end
 
       def duration_seconds(start_time, end_time)

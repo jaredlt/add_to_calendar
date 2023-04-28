@@ -7,6 +7,17 @@ class GoogleUrlTest < Minitest::Test
     @next_month_month = next_month.strftime('%m')
     @next_month_day = next_month.strftime('%d')
 
+    one_day = 1 * 24 * 60 * 60
+    @next_month_year_plus_one_day = (next_month + one_day).strftime('%Y')
+    @next_month_month_plus_one_day = (next_month + one_day).strftime('%m')
+    @next_month_day_plus_one_day = (next_month + one_day).strftime('%d')
+
+    seven_days = 7 * 24 * 60 * 60
+    @next_month_year_plus_seven_days = (next_month + seven_days).strftime('%Y')
+    @next_month_month_plus_seven_days = (next_month + seven_days).strftime('%m')
+    @next_month_day_plus_seven_days = (next_month + seven_days).strftime('%d')
+    @next_month_day_plus_eight_days = (next_month + seven_days + one_day).strftime('%d')
+
     @title = "Holly's 8th Birthday!"
     @timezone = "Europe/London"
     @url = "https://www.example.com/event-details"
@@ -108,6 +119,61 @@ class GoogleUrlTest < Minitest::Test
                              "&ctz=Europe/London" + 
                              "&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU" + 
                              "&details=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details"
+  end
+
+  def test_all_day_spans_single_day
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0),
+      all_day: true,
+      title: @title, 
+      timezone: @timezone
+    )
+    assert cal.google_url == "https://www.google.com/calendar/render?action=TEMPLATE" +
+                             "&text=Holly%27s%208th%20Birthday%21" + 
+                             "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}/#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}" +
+                             "&ctz=Europe/London"
+  end
+
+  def test_all_day_spans_multiple_days
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year_plus_seven_days,@next_month_month_plus_seven_days,@next_month_day_plus_seven_days,17,00,00,0),
+      all_day: true,
+      title: @title, 
+      timezone: @timezone
+    )
+    assert cal.google_url == "https://www.google.com/calendar/render?action=TEMPLATE" +
+                             "&text=Holly%27s%208th%20Birthday%21" + 
+                             "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}/#{@next_month_year_plus_seven_days}#{@next_month_month_plus_seven_days}#{@next_month_day_plus_eight_days}" +
+                             "&ctz=Europe/London"
+  end
+
+  def test_all_day_end_date_is_plus_one_from_end_date
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0),
+      all_day: true,
+      title: @title, 
+      timezone: @timezone
+    )
+    assert cal.google_url == "https://www.google.com/calendar/render?action=TEMPLATE" +
+                             "&text=Holly%27s%208th%20Birthday%21" + 
+                             "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}/#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}" +
+                             "&ctz=Europe/London"
+  end
+
+  def test_all_day_without_end_date_is_single_day
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      all_day: true,
+      title: @title, 
+      timezone: @timezone
+    )
+    assert cal.google_url == "https://www.google.com/calendar/render?action=TEMPLATE" +
+                             "&text=Holly%27s%208th%20Birthday%21" + 
+                             "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}/#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}" +
+                             "&ctz=Europe/London"
   end
   
 end
