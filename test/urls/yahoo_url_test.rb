@@ -2,13 +2,19 @@ require "test_helper"
 
 class YahooUrlTest < Minitest::Test
   def setup
-    # next_month = Time.now + 60*60*24*30
-    @next_month_year = "2020"
-    @next_month_month = "05"
-    @next_month_day = "12"
+    next_month = Time.now + 60*60*24*30
+    @next_month_year = next_month.strftime('%Y')
+    @next_month_month = next_month.strftime('%m')
+    @next_month_day = next_month.strftime('%d')
+
     @hour = 13
     @minute = 30
     @second = 00
+
+    seven_days = 7 * 24 * 60 * 60
+    @next_month_year_plus_seven_days = (next_month + seven_days).strftime('%Y')
+    @next_month_month_plus_seven_days = (next_month + seven_days).strftime('%m')
+    @next_month_day_plus_seven_days = (next_month + seven_days).strftime('%d')
 
     @title = "Holly's 8th Birthday!"
     @timezone = "Europe/London"
@@ -132,4 +138,48 @@ class YahooUrlTest < Minitest::Test
                             "&in_loc=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU"
   end
 
+  def test_all_day_spans_single_day
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0),
+      all_day: true,
+      title: @title, 
+      timezone: @timezone
+    )
+    assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60" +
+                            "&TITLE=Holly%27s%208th%20Birthday%21" + 
+                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
+                            "&ET=#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
+                            "&DUR=allday"
+  end
+
+  def test_all_day_spans_multiple_days
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year_plus_seven_days,@next_month_month_plus_seven_days,@next_month_day_plus_seven_days,17,00,00,0),
+      all_day: true,
+      title: @title, 
+      timezone: @timezone
+    )
+    assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60" +
+                            "&TITLE=Holly%27s%208th%20Birthday%21" + 
+                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
+                            "&ET=#{@next_month_year_plus_seven_days}#{@next_month_month_plus_seven_days}#{@next_month_day_plus_seven_days}" + 
+                            "&DUR=allday"
+  end
+
+  def test_all_day_without_end_date_is_single_day
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      all_day: true,
+      title: @title, 
+      timezone: @timezone
+    )
+    assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60" +
+                            "&TITLE=Holly%27s%208th%20Birthday%21" + 
+                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
+                            "&ET=#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
+                            "&DUR=allday"
+  end
+  
 end

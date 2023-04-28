@@ -6,7 +6,7 @@ require "erb"
 include ERB::Util
 require 'tzinfo'
 require 'date'
-# require 'pry'
+require 'pry'
 
 
 module AddToCalendar
@@ -57,13 +57,24 @@ module AddToCalendar
       calendar_url = "https://calendar.yahoo.com/?v=60"
       params = {}
       params[:title] = url_encode(title)
-      params[:st] = utc_datetime(start_datetime)
-      if end_datetime
-        seconds = duration_seconds(start_datetime, end_datetime)
-        params[:dur] = seconds_to_hours_minutes(seconds)
+      if all_day
+        params[:st] = format_date(start_datetime)
+        if end_datetime
+          params[:et] = format_date(end_datetime)
+        else
+          params[:et] = format_date(start_datetime)
+        end
+        params[:dur] = "allday"
       else
-        params[:dur] = "0100" 
+        params[:st] = utc_datetime(start_datetime)
+        if end_datetime
+          seconds = duration_seconds(start_datetime, end_datetime)
+          params[:dur] = seconds_to_hours_minutes(seconds)
+        else
+          params[:dur] = "0100" 
+        end
       end
+
       params[:desc] = url_encode(description) if description
       if add_url_to_description && url
         if params[:desc]
@@ -228,9 +239,9 @@ module AddToCalendar
         one_day = 1 * 24 * 60 * 60
         if all_day
           if end_datetime
-            "#{format_date_google(start_datetime)}/#{format_date_google(end_datetime + one_day)}"
+            "#{format_date(start_datetime)}/#{format_date(end_datetime + one_day)}"
           else
-            "#{format_date_google(start_datetime)}/#{format_date_google(start_datetime + one_day)}"
+            "#{format_date(start_datetime)}/#{format_date(start_datetime + one_day)}"
           end
         elsif end_datetime
           "#{format_datetime_google(start_datetime)}/#{format_datetime_google(end_datetime)}"
@@ -243,8 +254,8 @@ module AddToCalendar
         start_datetime.strftime('%Y%m%dT%H%M%S')
       end
 
-      def format_date_google(start_datetime)
-        start_datetime.strftime('%Y%m%d')
+      def format_date(date)
+        date.strftime('%Y%m%d')
       end
 
       def duration_seconds(start_time, end_time)
