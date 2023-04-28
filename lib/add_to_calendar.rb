@@ -182,11 +182,22 @@ module AddToCalendar
         end
         params = {}
         params[:subject] = url_encode(title.gsub(' & ', ' and '))
-        params[:startdt] = utc_datetime_microsoft(start_datetime)
-        if end_datetime
-          params[:enddt] = utc_datetime_microsoft(end_datetime)
+        if all_day
+          one_day = 1 * 24 * 60 * 60
+          params[:startdt] = microsoft_date(start_datetime)
+          if end_datetime
+            params[:enddt] = microsoft_date(end_datetime + one_day)
+          else
+            params[:enddt] = microsoft_date(start_datetime + one_day)
+          end
+          params[:allday] = "true"
         else
-          params[:enddt] = utc_datetime_microsoft(start_datetime + 60*60) # 1 hour later
+          params[:startdt] = utc_datetime_microsoft(start_datetime)
+          if end_datetime
+            params[:enddt] = utc_datetime_microsoft(end_datetime)
+          else
+            params[:enddt] = utc_datetime_microsoft(start_datetime + 60*60) # 1 hour later
+          end
         end
         params[:body] = url_encode(newlines_to_html_br(description)) if description
         if add_url_to_description && url
@@ -233,6 +244,10 @@ module AddToCalendar
         )
 
         return t.strftime('%Y-%m-%dT%H:%M:%SZ')
+      end
+
+      def microsoft_date(date)
+        date.strftime('%Y-%m-%d')
       end
 
       def google_dates(start_datetime, end_datetime, all_day)
