@@ -53,8 +53,8 @@ module AddToCalendar
     end
 
     def yahoo_url
-      # Eg. https://calendar.yahoo.com/?v=60&view=d&type=20&title=Holly%27s%208th%20Birthday!&st=20200615T170000Z&dur=0100&desc=Join%20us%20to%20celebrate%20with%20lots%20of%20games%20and%20cake!&in_loc=7%20Apartments,%20London
-      calendar_url = "https://calendar.yahoo.com/?v=60&view=d&type=20"
+      # Eg. https://calendar.yahoo.com/?v=60&title=Holly%27s%208th%20Birthday!&st=20200615T170000Z&dur=0100&desc=Join%20us%20to%20celebrate%20with%20lots%20of%20games%20and%20cake!&in_loc=7%20Apartments,%20London
+      calendar_url = "https://calendar.yahoo.com/?v=60"
       params = {}
       params[:title] = url_encode(title)
       params[:st] = utc_datetime(start_datetime)
@@ -75,7 +75,7 @@ module AddToCalendar
       params[:in_loc] = url_encode(location) if location
 
       params.each do |key, value|
-        calendar_url << "&#{key}=#{value}"
+        calendar_url << "&#{yahoo_param(key)}=#{value}"
       end
   
       return calendar_url
@@ -273,6 +273,14 @@ module AddToCalendar
             url_encode(e)
           end
         }.join("\\n")
+      end
+
+      def yahoo_param(key)
+        if key == :in_loc
+          key.to_s
+        else
+          key.to_s.upcase
+        end
       end
   end
 end

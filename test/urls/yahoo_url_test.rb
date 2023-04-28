@@ -16,10 +16,10 @@ class YahooUrlTest < Minitest::Test
     @location = "Flat 4, The Edge, 38 Smith-Dorrien St, London, N1 7GU"
     @description = "Come join us for lots of fun & cake!"
 
-    @url_with_defaults_required = "https://calendar.yahoo.com/?v=60&view=d&type=20" +
-                                  "&title=Holly%27s%208th%20Birthday%21" + 
-                                  "&st=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
-                                  "&dur=0100"
+    @url_with_defaults_required = "https://calendar.yahoo.com/?v=60" +
+                                  "&TITLE=Holly%27s%208th%20Birthday%21" + 
+                                  "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
+                                  "&DUR=0100"
 
   end
 
@@ -35,10 +35,10 @@ class YahooUrlTest < Minitest::Test
   def test_without_end_datetime
     # should set duration as 1 hour
     cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
-    assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60&view=d&type=20" +
-                            "&title=Holly%27s%208th%20Birthday%21" + 
-                            "&st=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
-                            "&dur=0100"
+    assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60" +
+                            "&TITLE=Holly%27s%208th%20Birthday%21" + 
+                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
+                            "&DUR=0100"
   end
 
   def test_with_end_datetime
@@ -48,10 +48,10 @@ class YahooUrlTest < Minitest::Test
       title: @title, 
       timezone: @timezone
     )
-    assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60&view=d&type=20" +
-                            "&title=Holly%27s%208th%20Birthday%21" + 
-                            "&st=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
-                            "&dur=0330"
+    assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60" +
+                            "&TITLE=Holly%27s%208th%20Birthday%21" + 
+                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
+                            "&DUR=0330"
   end
 
   def test_with_end_datetime_crossing_over_midnight
@@ -61,10 +61,10 @@ class YahooUrlTest < Minitest::Test
       title: @title, 
       timezone: @timezone
     )
-    assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60&view=d&type=20" +
-                            "&title=Holly%27s%208th%20Birthday%21" + 
-                            "&st=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
-                            "&dur=2730"
+    assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60" +
+                            "&TITLE=Holly%27s%208th%20Birthday%21" + 
+                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
+                            "&DUR=2730"
   end
 
   def test_with_location
@@ -74,12 +74,12 @@ class YahooUrlTest < Minitest::Test
 
   def test_with_url_without_description
     cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone, url: @url)
-    assert cal.yahoo_url == @url_with_defaults_required + "&desc=https%3A%2F%2Fwww.example.com%2Fevent-details"
+    assert cal.yahoo_url == @url_with_defaults_required + "&DESC=https%3A%2F%2Fwww.example.com%2Fevent-details"
   end
 
   def test_with_url_and_description
     cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone, url: @url, description: @description)
-    assert cal.yahoo_url == @url_with_defaults_required + "&desc=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details"
+    assert cal.yahoo_url == @url_with_defaults_required + "&DESC=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details"
   end
 
   def test_description_with_newlines_from_user_input
@@ -90,7 +90,7 @@ class YahooUrlTest < Minitest::Test
       url: @url, 
       description: "Come join us for lots of fun & cake!\n\nDon't forget your swimwear!"
     )
-    assert cal.yahoo_url == @url_with_defaults_required + "&desc=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0ADon%27t%20forget%20your%20swimwear%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details"
+    assert cal.yahoo_url == @url_with_defaults_required + "&DESC=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0ADon%27t%20forget%20your%20swimwear%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details"
   end
 
   def test_add_url_to_description_false_without_url
@@ -124,12 +124,12 @@ class YahooUrlTest < Minitest::Test
       location: @location,
       description: @description,
     )
-    assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60&view=d&type=20" +
-                            "&title=Holly%27s%208th%20Birthday%21" + 
-                            "&st=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
-                            "&dur=0330" +
-                            "&desc=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details" + 
+    assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60" +
+                            "&TITLE=Holly%27s%208th%20Birthday%21" + 
+                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
+                            "&DUR=0330" +
+                            "&DESC=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details" + 
                             "&in_loc=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU"
   end
-  
+
 end
