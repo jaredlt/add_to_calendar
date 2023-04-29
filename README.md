@@ -78,7 +78,8 @@ event_attributes = {
     location: "20 W 34th St, New York, NY 10001", 
     url: "https://www.ruby-lang.org/en/",
     description: "Join us to learn all about Ruby.",
-    add_url_to_description: true # defaults to true
+    add_url_to_description: true # defaults to true,
+    all_day: true # defaults to false
 }
 
 cal = AddToCalendar::URLs.new(**event_attributes)
@@ -93,7 +94,8 @@ cal = AddToCalendar::URLs.new(**event_attributes)
 | location               | No        | String     |       |
 | url                    | No        | String     | Most providers do not have a native URL field. If you set `url` it will be added to the end of the description field (see `add_url_to_description`) |
 | description            | No        | String     | Accepts newlines by passing `\n` Eg. `"Join us for fun & drinks\n\nPS. Smart casual"` |
-| add_url_to_description | No        | true/false | defaults to `true`. Set `add_url_to_description: false` to stop the URL from being added to the description |
+| add_url_to_description | No        | true/false | Defaults to `true`. Set `add_url_to_description: false` to stop the URL from being added to the description |
+| all_day                | No        | true/false | <ul><li>Defaults to `false`.</li><li>When set to `true` the times will be ignored.</li><li>If no end_datetime provided it will be a single day event.</li><li>When providing end_datetime, use the final day of the event (eg. 1 day event start: 2023-05-01, end: 2023-05-01; 3 day event start: 2023-05-01, end: 2023-05-03).</li><li>Some calendars require you to specify the _day after_ as the end date which feels counterintuitive, this Gem takes care of that for you.</li></ul> |
 
 ### Timezones and offsets
 
