@@ -27,11 +27,19 @@ class IcalUrlTest < Minitest::Test
     @location = "Flat 4, The Edge, 38 Smith-Dorrien St, London, N1 7GU"
     @description = "Come join us for lots of fun & cake!"
 
-    @url_with_defaults_required = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+    @url_with_defaults_required = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0APRODID:-//AddToCalendar//RubyGem//EN%0ABEGIN:VEVENT" +
+                                  "%0ADTSTAMP:#{Time.now.strftime("%Y%m%dT%H%M%SZ")}" +                              
                                   "%0ADTSTART:#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
                                   "%0ADTEND:#{@next_month_year}#{@next_month_month}#{@next_month_day}T133000Z" + 
                                   "%0ASUMMARY:Holly%27s%208th%20Birthday%21"
     @url_end = "%0AEND:VEVENT%0AEND:VCALENDAR"
+
+    # We need to freeze time on each test because DTSTAMP is generated via Time.now
+    Timecop.freeze(Time.now)
+  end
+
+  def teardown
+    Timecop.return
   end
 
   def test_with_only_required_attributes
@@ -44,7 +52,8 @@ class IcalUrlTest < Minitest::Test
     # should set end as start + 1 hour
     cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
     uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
-    assert cal.ical_url == "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+    assert cal.ical_url == "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0APRODID:-//AddToCalendar//RubyGem//EN%0ABEGIN:VEVENT" +
+                           "%0ADTSTAMP:#{Time.now.strftime("%Y%m%dT%H%M%SZ")}" +
                            "%0ADTSTART:#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
                            "%0ADTEND:#{@next_month_year}#{@next_month_month}#{@next_month_day}T133000Z" + 
                            "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 
@@ -60,7 +69,8 @@ class IcalUrlTest < Minitest::Test
       timezone: @timezone
     )
     uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
-    assert cal.ical_url == "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+    assert cal.ical_url == "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0APRODID:-//AddToCalendar//RubyGem//EN%0ABEGIN:VEVENT" +
+                           "%0ADTSTAMP:#{Time.now.strftime("%Y%m%dT%H%M%SZ")}" +                       
                            "%0ADTSTART:#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
                            "%0ADTEND:#{@next_month_year}#{@next_month_month}#{@next_month_day}T160000Z" + 
                            "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 
@@ -76,7 +86,8 @@ class IcalUrlTest < Minitest::Test
       timezone: @timezone
     )
     uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
-    assert cal.ical_url == "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+    assert cal.ical_url == "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0APRODID:-//AddToCalendar//RubyGem//EN%0ABEGIN:VEVENT" +
+                           "%0ADTSTAMP:#{Time.now.strftime("%Y%m%dT%H%M%SZ")}" +                       
                            "%0ADTSTART:#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
                            "%0ADTEND:#{@next_month_year}#{@next_month_month}#{@next_month_day.to_i+1}T160000Z" + 
                            "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 
@@ -144,7 +155,8 @@ class IcalUrlTest < Minitest::Test
       description: @description,
     )
     uid = "%0AUID:-#{url_encode(cal.url)}"
-    assert cal.ical_url == "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+    assert cal.ical_url == "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0APRODID:-//AddToCalendar//RubyGem//EN%0ABEGIN:VEVENT" +
+                           "%0ADTSTAMP:#{Time.now.strftime("%Y%m%dT%H%M%SZ")}" +                       
                            "%0ADTSTART:#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
                            "%0ADTEND:#{@next_month_year}#{@next_month_month}#{@next_month_day}T160000Z" + 
                            "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 
@@ -164,7 +176,8 @@ class IcalUrlTest < Minitest::Test
       timezone: @timezone
     )
     uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
-    ical = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+    ical = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0APRODID:-//AddToCalendar//RubyGem//EN%0ABEGIN:VEVENT" +
+           "%0ADTSTAMP:#{Time.now.strftime("%Y%m%dT%H%M%SZ")}" +       
            "%0ADTSTART;VALUE=DATE:#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
            "%0ADTEND;VALUE=DATE:#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}" + 
            "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 
@@ -182,7 +195,8 @@ class IcalUrlTest < Minitest::Test
       timezone: @timezone
     )
     uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
-    ical = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+    ical = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0APRODID:-//AddToCalendar//RubyGem//EN%0ABEGIN:VEVENT" +
+           "%0ADTSTAMP:#{Time.now.strftime("%Y%m%dT%H%M%SZ")}" +       
            "%0ADTSTART;VALUE=DATE:#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
            "%0ADTEND;VALUE=DATE:#{@next_month_year_plus_eight_days}#{@next_month_month_plus_eight_days}#{@next_month_day_plus_eight_days}" + 
            "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 
@@ -200,7 +214,8 @@ class IcalUrlTest < Minitest::Test
       timezone: @timezone
     )
     uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
-    ical = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+    ical = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0APRODID:-//AddToCalendar//RubyGem//EN%0ABEGIN:VEVENT" +
+           "%0ADTSTAMP:#{Time.now.strftime("%Y%m%dT%H%M%SZ")}" +       
            "%0ADTSTART;VALUE=DATE:#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
            "%0ADTEND;VALUE=DATE:#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}" + 
            "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 
@@ -219,7 +234,8 @@ class IcalUrlTest < Minitest::Test
       timezone: @timezone
     )
     uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
-    ical = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+    ical = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0APRODID:-//AddToCalendar//RubyGem//EN%0ABEGIN:VEVENT" +
+           "%0ADTSTAMP:#{Time.now.strftime("%Y%m%dT%H%M%SZ")}" +       
            "%0ADTSTART;VALUE=DATE:#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
            "%0ADTEND;VALUE=DATE:#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}" + 
            "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 

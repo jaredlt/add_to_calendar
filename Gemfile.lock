@@ -16,6 +16,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     rake (13.0.1)
+    timecop (0.9.6)
     tzinfo (2.0.2)
       concurrent-ruby (~> 1.0)
     tzinfo-data (1.2020.1)
@@ -30,6 +31,7 @@ DEPENDENCIES
   minitest (~> 5.0)
   pry (~> 0.13.1)
   rake (~> 13.0.1)
+  timecop (~> 0.9)
 
 BUNDLED WITH
    2.4.12

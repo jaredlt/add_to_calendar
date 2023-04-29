@@ -105,8 +105,10 @@ module AddToCalendar
     def ical_url
       # Downloads a *.ics file provided as a data-uri
       # Eg. "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20200512T123000Z%0ADTEND:20200512T160000Z%0ASUMMARY:Holly%27s%208th%20Birthday%21%0AURL:https%3A%2F%2Fwww.example.com%2Fevent-details%0ADESCRIPTION:Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21\\n\\nhttps%3A%2F%2Fwww.example.com%2Fevent-details%0ALOCATION:Flat%204%5C%2C%20The%20Edge%5C%2C%2038%20Smith-Dorrien%20St%5C%2C%20London%5C%2C%20N1%207GU%0AUID:-https%3A%2F%2Fwww.example.com%2Fevent-details%0AEND:VEVENT%0AEND:VCALENDAR"
-      calendar_url = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT"
+      calendar_url = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0APRODID:-//AddToCalendar//RubyGem//EN%0ABEGIN:VEVENT"
+
       params = {}
+      params[:DTSTAMP] = Time.now.strftime("%Y%m%dT%H%M%SZ")
       if all_day
         one_day = 1 * 24 * 60 * 60
         params["DTSTART;VALUE=DATE"] = format_date(start_datetime)
