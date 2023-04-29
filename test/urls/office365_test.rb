@@ -20,6 +20,9 @@ class Office365UrlTest < Minitest::Test
     @next_month_year_plus_seven_days = (next_month + seven_days).strftime('%Y')
     @next_month_month_plus_seven_days = (next_month + seven_days).strftime('%m')
     @next_month_day_plus_seven_days = (next_month + seven_days).strftime('%d')
+
+    @next_month_year_plus_eight_days = (next_month + seven_days + one_day).strftime('%Y')
+    @next_month_month_plus_eight_days = (next_month + seven_days + one_day).strftime('%m')
     @next_month_day_plus_eight_days = (next_month + seven_days + one_day).strftime('%d')
 
     @title = "Holly's 8th Birthday!"
@@ -198,7 +201,7 @@ class Office365UrlTest < Minitest::Test
     yahoo_url = "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
                 "&subject=Holly%27s%208th%20Birthday%21" + 
                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}" + 
-                "&enddt=#{@next_month_year_plus_seven_days}-#{@next_month_month_plus_seven_days}-#{@next_month_day_plus_eight_days}" +
+                "&enddt=#{@next_month_year_plus_eight_days}-#{@next_month_month_plus_eight_days}-#{@next_month_day_plus_eight_days}" +
                 "&allday=true"
     assert cal.office365_url == yahoo_url
   end

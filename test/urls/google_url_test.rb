@@ -16,6 +16,9 @@ class GoogleUrlTest < Minitest::Test
     @next_month_year_plus_seven_days = (next_month + seven_days).strftime('%Y')
     @next_month_month_plus_seven_days = (next_month + seven_days).strftime('%m')
     @next_month_day_plus_seven_days = (next_month + seven_days).strftime('%d')
+
+    @next_month_year_plus_eight_days = (next_month + seven_days + one_day).strftime('%Y')
+    @next_month_month_plus_eight_days = (next_month + seven_days + one_day).strftime('%m')
     @next_month_day_plus_eight_days = (next_month + seven_days + one_day).strftime('%d')
 
     @title = "Holly's 8th Birthday!"
@@ -145,7 +148,7 @@ class GoogleUrlTest < Minitest::Test
     )
     assert cal.google_url == "https://www.google.com/calendar/render?action=TEMPLATE" +
                              "&text=Holly%27s%208th%20Birthday%21" + 
-                             "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}/#{@next_month_year_plus_seven_days}#{@next_month_month_plus_seven_days}#{@next_month_day_plus_eight_days}" +
+                             "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}/#{@next_month_year_plus_eight_days}#{@next_month_month_plus_eight_days}#{@next_month_day_plus_eight_days}" +
                              "&ctz=Europe/London"
   end
 
