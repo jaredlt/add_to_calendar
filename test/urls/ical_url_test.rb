@@ -2,13 +2,24 @@ require "test_helper"
 
 class IcalUrlTest < Minitest::Test
   def setup
-    # next_month = Time.now + 60*60*24*30
-    # @next_month_year = next_month.strftime('%Y')
-    # @next_month_month = next_month.strftime('%m')
-    # @next_month_day = next_month.strftime('%d')
-    @next_month_year = "2020"
-    @next_month_month = "05"
-    @next_month_day = "12"
+    next_month = Time.now + 60*60*24*30
+    @next_month_year = next_month.strftime('%Y')
+    @next_month_month = next_month.strftime('%m')
+    @next_month_day = next_month.strftime('%d')
+
+    one_day = 1 * 24 * 60 * 60
+    @next_month_year_plus_one_day = (next_month + one_day).strftime('%Y')
+    @next_month_month_plus_one_day = (next_month + one_day).strftime('%m')
+    @next_month_day_plus_one_day = (next_month + one_day).strftime('%d')
+
+    seven_days = 7 * 24 * 60 * 60
+    @next_month_year_plus_seven_days = (next_month + seven_days).strftime('%Y')
+    @next_month_month_plus_seven_days = (next_month + seven_days).strftime('%m')
+    @next_month_day_plus_seven_days = (next_month + seven_days).strftime('%d')
+
+    @next_month_year_plus_eight_days = (next_month + seven_days + one_day).strftime('%Y')
+    @next_month_month_plus_eight_days = (next_month + seven_days + one_day).strftime('%m')
+    @next_month_day_plus_eight_days = (next_month + seven_days + one_day).strftime('%d')
 
     @title = "Holly's 8th Birthday!"
     @timezone = "Europe/London"
@@ -21,8 +32,6 @@ class IcalUrlTest < Minitest::Test
                                   "%0ADTEND:#{@next_month_year}#{@next_month_month}#{@next_month_day}T133000Z" + 
                                   "%0ASUMMARY:Holly%27s%208th%20Birthday%21"
     @url_end = "%0AEND:VEVENT%0AEND:VCALENDAR"
-
-    # "%0AUID:-20200610T123000Z-Holly%27s%208th%20Birthday%21%0AEND:VEVENT%0AEND:VCALENDAR"
   end
 
   def test_with_only_required_attributes
@@ -144,6 +153,80 @@ class IcalUrlTest < Minitest::Test
                            "%0ALOCATION:Flat%204%5C%2C%20The%20Edge%5C%2C%2038%20Smith-Dorrien%20St%5C%2C%20London%5C%2C%20N1%207GU" + 
                            uid + 
                            @url_end
+  end
+
+  def test_all_day_spans_single_day
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
+      all_day: true,
+      title: @title, 
+      timezone: @timezone
+    )
+    uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
+    ical = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+           "%0ADTSTART;VALUE=DATE:#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
+           "%0ADTEND;VALUE=DATE:#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}" + 
+           "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 
+           uid + 
+           @url_end
+    assert cal.ical_url == ical
+  end
+
+  def test_all_day_spans_multiple_days
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year_plus_seven_days,@next_month_month_plus_seven_days,@next_month_day_plus_seven_days,17,00,00,0), 
+      all_day: true,
+      title: @title, 
+      timezone: @timezone
+    )
+    uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
+    ical = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+           "%0ADTSTART;VALUE=DATE:#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
+           "%0ADTEND;VALUE=DATE:#{@next_month_year_plus_eight_days}#{@next_month_month_plus_eight_days}#{@next_month_day_plus_eight_days}" + 
+           "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 
+           uid + 
+           @url_end
+
+    assert cal.ical_url == ical
+  end
+
+  def test_all_day_without_end_date_is_single_day
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      all_day: true,
+      title: @title, 
+      timezone: @timezone
+    )
+    uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
+    ical = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+           "%0ADTSTART;VALUE=DATE:#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
+           "%0ADTEND;VALUE=DATE:#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}" + 
+           "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 
+           uid + 
+           @url_end
+
+    assert cal.ical_url == ical
+  end
+
+  def test_all_day_end_date_is_plus_one_from_end_date
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
+      all_day: true,
+      title: @title, 
+      timezone: @timezone
+    )
+    uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
+    ical = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT" +
+           "%0ADTSTART;VALUE=DATE:#{@next_month_year}#{@next_month_month}#{@next_month_day}" + 
+           "%0ADTEND;VALUE=DATE:#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}" + 
+           "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 
+           uid + 
+           @url_end
+
+    assert cal.ical_url == ical
   end
   
 end

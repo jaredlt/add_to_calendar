@@ -6,7 +6,7 @@ require "erb"
 include ERB::Util
 require 'tzinfo'
 require 'date'
-require 'pry'
+# require 'pry'
 
 
 module AddToCalendar
@@ -107,11 +107,21 @@ module AddToCalendar
       # Eg. "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20200512T123000Z%0ADTEND:20200512T160000Z%0ASUMMARY:Holly%27s%208th%20Birthday%21%0AURL:https%3A%2F%2Fwww.example.com%2Fevent-details%0ADESCRIPTION:Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21\\n\\nhttps%3A%2F%2Fwww.example.com%2Fevent-details%0ALOCATION:Flat%204%5C%2C%20The%20Edge%5C%2C%2038%20Smith-Dorrien%20St%5C%2C%20London%5C%2C%20N1%207GU%0AUID:-https%3A%2F%2Fwww.example.com%2Fevent-details%0AEND:VEVENT%0AEND:VCALENDAR"
       calendar_url = "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT"
       params = {}
-      params[:DTSTART] = utc_datetime(start_datetime)
-      if end_datetime
-        params[:DTEND] = utc_datetime(end_datetime)
+      if all_day
+        one_day = 1 * 24 * 60 * 60
+        params["DTSTART;VALUE=DATE"] = format_date(start_datetime)
+        if end_datetime
+          params["DTEND;VALUE=DATE"] = format_date(end_datetime + one_day)
+        else
+          params["DTEND;VALUE=DATE"] = format_date(start_datetime + one_day)
+        end
       else
-        params[:DTEND] = utc_datetime(start_datetime + 60*60) # 1 hour later
+        params[:DTSTART] = utc_datetime(start_datetime)
+        if end_datetime
+          params[:DTEND] = utc_datetime(end_datetime)
+        else
+          params[:DTEND] = utc_datetime(start_datetime + 60*60) # 1 hour later
+        end
       end
       params[:SUMMARY] = url_encode_ical(title)
       params[:URL] = url_encode(url) if url
