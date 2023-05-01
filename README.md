@@ -78,7 +78,7 @@ event_attributes = {
     location: "20 W 34th St, New York, NY 10001", 
     url: "https://www.ruby-lang.org/en/",
     description: "Join us to learn all about Ruby.",
-    add_url_to_description: true # defaults to true,
+    add_url_to_description: true, # defaults to true
     all_day: true # defaults to false
 }
 
