@@ -72,14 +72,14 @@ class OutlookComUrlTest < Minitest::Test
   def test_with_end_datetime_crossing_over_midnight
     cal = AddToCalendar::URLs.new(
       start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
-      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day.to_i+1,17,00,00,0), 
+      end_datetime: Time.new(@next_month_year_plus_one_day,@next_month_month_plus_one_day,@next_month_day_plus_one_day,17,00,00,0), 
       title: @title, 
       timezone: @timezone
     )
     assert cal.outlook_com_url == "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
                                  "&subject=Holly%27s%208th%20Birthday%21" + 
                                  "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T12:30:00Z" + 
-                                 "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day.to_i+1}T16:00:00Z"
+                                 "&enddt=#{@next_month_year_plus_one_day}-#{@next_month_month_plus_one_day}-#{@next_month_day_plus_one_day}T16:00:00Z"
   end
 
   def test_with_location

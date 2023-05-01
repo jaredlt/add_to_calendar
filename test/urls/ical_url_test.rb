@@ -81,7 +81,7 @@ class IcalUrlTest < Minitest::Test
   def test_with_end_datetime_after_midnight
     cal = AddToCalendar::URLs.new(
       start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
-      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day.to_i+1,17,00,00,0), 
+      end_datetime: Time.new(@next_month_year_plus_one_day,@next_month_month_plus_one_day,@next_month_day_plus_one_day,17,00,00,0), 
       title: @title, 
       timezone: @timezone
     )
@@ -89,7 +89,7 @@ class IcalUrlTest < Minitest::Test
     assert cal.ical_url == "data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0APRODID:-//AddToCalendar//RubyGem//EN%0ABEGIN:VEVENT" +
                            "%0ADTSTAMP:#{Time.now.strftime("%Y%m%dT%H%M%SZ")}" +                       
                            "%0ADTSTART:#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
-                           "%0ADTEND:#{@next_month_year}#{@next_month_month}#{@next_month_day.to_i+1}T160000Z" + 
+                           "%0ADTEND:#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}T160000Z" + 
                            "%0ASUMMARY:Holly%27s%208th%20Birthday%21" + 
                            uid + 
                            @url_end

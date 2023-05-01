@@ -11,6 +11,11 @@ class YahooUrlTest < Minitest::Test
     @minute = 30
     @second = 00
 
+    one_day = 1 * 24 * 60 * 60
+    @next_month_year_plus_one_day = (next_month + one_day).strftime('%Y')
+    @next_month_month_plus_one_day = (next_month + one_day).strftime('%m')
+    @next_month_day_plus_one_day = (next_month + one_day).strftime('%d')
+
     seven_days = 7 * 24 * 60 * 60
     @next_month_year_plus_seven_days = (next_month + seven_days).strftime('%Y')
     @next_month_month_plus_seven_days = (next_month + seven_days).strftime('%m')
@@ -63,7 +68,7 @@ class YahooUrlTest < Minitest::Test
   def test_with_end_datetime_crossing_over_midnight
     cal = AddToCalendar::URLs.new(
       start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
-      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day.to_i+1,17,00,00,0), 
+      end_datetime: Time.new(@next_month_year_plus_one_day,@next_month_month_plus_one_day,@next_month_day_plus_one_day,17,00,00,0), 
       title: @title, 
       timezone: @timezone
     )
