@@ -29,7 +29,7 @@ class YahooUrlTest < Minitest::Test
 
     @url_with_defaults_required = "https://calendar.yahoo.com/?v=60" +
                                   "&TITLE=Holly%27s%208th%20Birthday%21" + 
-                                  "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
+                                  "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T#{@hour}3000Z" + 
                                   "&DUR=0100"
 
   end
@@ -45,23 +45,23 @@ class YahooUrlTest < Minitest::Test
 
   def test_without_end_datetime
     # should set duration as 1 hour
-    cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
+    cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour,30,00,0), title: @title, timezone: @timezone)
     assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60" +
                             "&TITLE=Holly%27s%208th%20Birthday%21" + 
-                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
+                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T#{@hour}3000Z" + 
                             "&DUR=0100"
   end
 
   def test_with_end_datetime
     cal = AddToCalendar::URLs.new(
-      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
-      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour+4,00,00,0), 
       title: @title, 
       timezone: @timezone
     )
     assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60" +
                             "&TITLE=Holly%27s%208th%20Birthday%21" + 
-                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
+                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T#{@hour}3000Z" + 
                             "&DUR=0330"
   end
 
@@ -74,7 +74,7 @@ class YahooUrlTest < Minitest::Test
     )
     assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60" +
                             "&TITLE=Holly%27s%208th%20Birthday%21" + 
-                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
+                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T#{@hour}3000Z" + 
                             "&DUR=2730"
   end
 
@@ -127,8 +127,8 @@ class YahooUrlTest < Minitest::Test
 
   def test_with_all_attributes
     cal = AddToCalendar::URLs.new(
-      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
-      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour+4,00,00,0), 
       title: @title, 
       timezone: @timezone,
       url: @url,
@@ -137,7 +137,7 @@ class YahooUrlTest < Minitest::Test
     )
     assert cal.yahoo_url == "https://calendar.yahoo.com/?v=60" +
                             "&TITLE=Holly%27s%208th%20Birthday%21" + 
-                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T123000Z" + 
+                            "&ST=#{@next_month_year}#{@next_month_month}#{@next_month_day}T#{@hour}3000Z" + 
                             "&DUR=0330" +
                             "&DESC=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details" + 
                             "&in_loc=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU"

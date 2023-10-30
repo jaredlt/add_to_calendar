@@ -33,8 +33,8 @@ class OutlookComUrlTest < Minitest::Test
 
     @url_with_defaults_required = "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
                                   "&subject=Holly%27s%208th%20Birthday%21" + 
-                                  "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T12:30:00Z" + 
-                                  "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T13:30:00Z"
+                                  "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" + 
+                                  "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour+1}:30:00Z"
 
   end
 
@@ -49,37 +49,37 @@ class OutlookComUrlTest < Minitest::Test
 
   def test_without_end_datetime
     # should set duration as 1 hour
-    cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), title: @title, timezone: @timezone)
+    cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour,30,00,0), title: @title, timezone: @timezone)
     assert cal.outlook_com_url == "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
                                  "&subject=Holly%27s%208th%20Birthday%21" + 
-                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T12:30:00Z" + 
-                                 "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T13:30:00Z"
+                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" + 
+                                 "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour+1}:30:00Z"
   end
 
   def test_with_end_datetime
     cal = AddToCalendar::URLs.new(
-      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
-      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour+4,00,00,0), 
       title: @title, 
       timezone: @timezone
     )
     assert cal.outlook_com_url == "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
                                  "&subject=Holly%27s%208th%20Birthday%21" + 
-                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T12:30:00Z" + 
-                                 "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T16:00:00Z"
+                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" + 
+                                 "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour+4}:00:00Z"
   end
 
   def test_with_end_datetime_crossing_over_midnight
     cal = AddToCalendar::URLs.new(
-      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
-      end_datetime: Time.new(@next_month_year_plus_one_day,@next_month_month_plus_one_day,@next_month_day_plus_one_day,17,00,00,0), 
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour,30,00,0), 
+      end_datetime: Time.new(@next_month_year_plus_one_day,@next_month_month_plus_one_day,@next_month_day_plus_one_day,@hour+4,00,00,0), 
       title: @title, 
       timezone: @timezone
     )
     assert cal.outlook_com_url == "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
                                  "&subject=Holly%27s%208th%20Birthday%21" + 
-                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T12:30:00Z" + 
-                                 "&enddt=#{@next_month_year_plus_one_day}-#{@next_month_month_plus_one_day}-#{@next_month_day_plus_one_day}T16:00:00Z"
+                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" + 
+                                 "&enddt=#{@next_month_year_plus_one_day}-#{@next_month_month_plus_one_day}-#{@next_month_day_plus_one_day}T#{@hour+4}:00:00Z"
   end
 
   def test_with_location
@@ -139,8 +139,8 @@ class OutlookComUrlTest < Minitest::Test
 
   def test_with_all_attributes
     cal = AddToCalendar::URLs.new(
-      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
-      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,17,00,00,0), 
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour+4,00,00,0), 
       title: @title, 
       timezone: @timezone,
       url: @url,
@@ -149,8 +149,8 @@ class OutlookComUrlTest < Minitest::Test
     )
     assert cal.outlook_com_url == "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" + 
                                  "&subject=Holly%27s%208th%20Birthday%21" + 
-                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T12:30:00Z" + 
-                                 "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T16:00:00Z" + 
+                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" + 
+                                 "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour+4}:00:00Z" + 
                                  "&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%3Cbr%3E%3Cbr%3Ehttps%3A%2F%2Fwww.example.com%2Fevent-details" + 
                                  "&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU"
   end
@@ -167,11 +167,11 @@ class OutlookComUrlTest < Minitest::Test
       title: "Birthday & Sleepover", 
       timezone: @timezone
     )
-
-    assert cal.outlook_com_url == "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
-                                  "&subject=Birthday%20and%20Sleepover" +
-                                  "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T12:30:00Z" + 
-                                  "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T13:30:00Z"
+    expected = "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
+               "&subject=Birthday%20and%20Sleepover" +
+               "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" + 
+               "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour+1}:30:00Z"
+    assert cal.outlook_com_url == expected
   end
 
   def test_all_day_spans_single_day
