@@ -246,5 +246,25 @@ class IcalUrlTest < Minitest::Test
 
     assert cal.ical_url == ical
   end
+
+  def test_organizer
+    cal = AddToCalendar::URLs.new(
+      start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0), 
+      end_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,14,30,00,0), 
+      title: @title, 
+      timezone: @timezone,
+      organizer: {
+        name: "Jared Turner",
+        email: "jared@example.com"
+      }
+    )
+    uid = "%0AUID:-#{cal.send(:utc_datetime, cal.start_datetime)}-#{cal.send(:url_encode_ical, cal.title)}"
+    ical = @url_with_defaults_required + 
+           "%0AORGANIZER;CN%3D%22Jared%20Turner%22%3Amailto%3Ajared%40example.com" +
+           uid + 
+           @url_end
+
+    assert cal.ical_url == ical
+  end
   
 end

@@ -270,4 +270,15 @@ class AddToCalendarTest < Minitest::Test
     assert cal.location == "20 W 34th St, New York, NY 10001"
   end
 
+  def test_attribute_organizer_must_be_valid
+    assert_raises(ArgumentError) do
+      AddToCalendar::URLs.new(
+        start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,13,30,00,0),
+        title: @title,
+        timezone: @timezone,
+        organizer: "not valid"
+      )
+    end
+  end
+
 end

@@ -79,7 +79,11 @@ event_attributes = {
     url: "https://www.ruby-lang.org/en/",
     description: "Join us to learn all about Ruby.",
     add_url_to_description: true, # defaults to true
-    all_day: true # defaults to false
+    all_day: true, # defaults to false
+    organizer: { 
+      name: "First Last",
+      email: "email@example.com"
+    }
 }
 
 cal = AddToCalendar::URLs.new(**event_attributes)
@@ -96,6 +100,7 @@ cal = AddToCalendar::URLs.new(**event_attributes)
 | description            | No        | String     | Accepts newlines by passing `\n` Eg. `"Join us for fun & drinks\n\nPS. Smart casual"` |
 | add_url_to_description | No        | true/false | Defaults to `true`. Set `add_url_to_description: false` to stop the URL from being added to the description |
 | all_day                | No        | true/false | <ul><li>Defaults to `false`.</li><li>When set to `true` the times will be ignored.</li><li>If no end_datetime provided it will be a single day event.</li><li>When providing end_datetime, use the final day of the event (eg. 1 day event start: 2023-05-01, end: 2023-05-01; 3 day event start: 2023-05-01, end: 2023-05-03).</li><li>Some calendars require you to specify the _day after_ as the end date which feels counterintuitive, this Gem takes care of that for you.</li></ul> |
+| organizer              | No        | Hash | <ul><li>Only supported by ical</li><li>If used you must provide both `name` and `email`</li><li>Must be in format `{ name: "First Last", email: "email@example.com" }`</li></ul> |
 
 ### Timezones and offsets
 

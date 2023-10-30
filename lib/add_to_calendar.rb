@@ -8,13 +8,12 @@ require 'tzinfo'
 require 'date'
 # require 'pry'
 
-
 module AddToCalendar
   class Error < StandardError; end
   
   class URLs
-    attr_accessor :start_datetime, :end_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description, :all_day
-    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true, all_day: false)
+    attr_accessor :start_datetime, :end_datetime, :title, :timezone, :location, :url, :description, :add_url_to_description, :all_day, :organizer
+    def initialize(start_datetime:, end_datetime: nil, title:, timezone:, location: nil, url: nil, description: nil, add_url_to_description: true, all_day: false, organizer: nil)
       @start_datetime = start_datetime
       @end_datetime = end_datetime
       @title = title
@@ -24,6 +23,7 @@ module AddToCalendar
       @description = description
       @add_url_to_description = add_url_to_description
       @all_day = all_day
+      @organizer = organizer
   
       validate_attributes
     end
@@ -126,6 +126,9 @@ module AddToCalendar
         end
       end
       params[:SUMMARY] = url_encode_ical(title)
+      if organizer
+        params[:ORGANIZER] = url_encode_ical("CN=\"#{organizer[:name]}\":mailto:#{organizer[:email]}")
+      end
       params[:URL] = url_encode(url) if url
       params[:DESCRIPTION] = url_encode_ical(description) if description
       if add_url_to_description && url
@@ -141,7 +144,11 @@ module AddToCalendar
       
       new_line = "%0A"
       params.each do |key, value|
-        calendar_url << "#{new_line}#{key}:#{value}"
+        if key == :ORGANIZER
+          calendar_url << "#{new_line}#{key};#{value}"
+        else
+          calendar_url << "#{new_line}#{key}:#{value}"
+        end
       end
 
       calendar_url << "%0AEND:VEVENT%0AEND:VCALENDAR"
@@ -180,6 +187,12 @@ module AddToCalendar
 
         if description
           raise(ArgumentError, ":description must be a string") unless self.description.kind_of? String
+        end
+
+        if organizer
+          unless self.organizer.is_a?(Hash) && self.organizer[:name].is_a?(String) && self.organizer[:email].is_a?(String)
+            raise(ArgumentError, ":organizer must be a Hash of format { name: \"First Last\", email: \"email@example.com\" }")
+          end
         end
       end
 
