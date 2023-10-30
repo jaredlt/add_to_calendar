@@ -8,11 +8,11 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    coderay (1.1.2)
+    coderay (1.1.3)
     concurrent-ruby (1.1.6)
     method_source (1.0.0)
     minitest (5.18.0)
-    pry (0.13.1)
+    pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
     rake (13.0.1)
@@ -29,9 +29,9 @@ DEPENDENCIES
   add_to_calendar!
   bundler (~> 2.0)
   minitest (~> 5.0)
-  pry (~> 0.13.1)
+  pry (~> 0.14)
   rake (~> 13.0.1)
   timecop (~> 0.9)
 
 BUNDLED WITH
-   2.4.12
+   2.3.9
