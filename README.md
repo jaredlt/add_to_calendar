@@ -112,7 +112,6 @@ cal = AddToCalendar::URLs.new(**event_attributes)
 
 - IE11 and lower will not work for `ical_url`, `apple_url` and `outlook_url` (IE does not properly support [data-uri links](https://caniuse.com/#feat=datauri). See [#16](https://github.com/jaredlt/add_to_calendar/issues/16)).
 - IE11 will also not work with `Yahoo`, but this is because Yahoo  is deprecating IE 11 support and only offers a simplified interface which does not work with the add event URL.
-- `Office 365` and `Outlook.com` do not work on mobile. This seems to be an issue on Microsoft's side. Their mobile web interface does not support the 'create event' URLs and the links do not open the apps if you have them installed.
 
 ### More details
 
