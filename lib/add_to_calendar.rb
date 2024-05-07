@@ -27,6 +27,58 @@ module AddToCalendar
   
       validate_attributes
     end
+
+    def hey_url
+      #base URL https://app.hey.com/calendar/ical_events/new?ical_source=
+      calendar_url = "https://app.hey.com/calendar/ical_events/new?ical_source="
+      params = {}
+      params[:DTSTAMP] = Time.now.strftime("%Y%m%dT%H%M%SZ")
+      if all_day
+        one_day = 1 * 24 * 60 * 60
+        params["DTSTART;VALUE=DATE"] = format_date(start_datetime)
+        if end_datetime
+          params["DTEND;VALUE=DATE"] = format_date(end_datetime + one_day)
+        else
+          params["DTEND;VALUE=DATE"] = format_date(start_datetime + one_day)
+        end
+      else
+        params[:DTSTART] = utc_datetime(start_datetime)
+        if end_datetime
+          params[:DTEND] = utc_datetime(end_datetime)
+        else
+          params[:DTEND] = utc_datetime(start_datetime + 60*60) # 1 hour later
+        end
+      end
+      params[:SUMMARY] = url_encode_ical(title)
+      if organizer
+        params[:ORGANIZER] = url_encode_ical("CN=\"#{organizer[:name]}\":mailto:#{organizer[:email]}")
+      end
+      params[:URL] = url_encode(url) if url
+      params[:DESCRIPTION] = url_encode_ical(description) if description
+      if add_url_to_description && url
+        if params[:DESCRIPTION]
+          params[:DESCRIPTION] << "\\n\\n#{url_encode(url)}"
+        else
+          params[:DESCRIPTION] = url_encode(url)
+        end
+      end
+      params[:LOCATION] = url_encode_ical(location) if location
+      params[:UID] = "-#{url_encode(url)}" if url
+      params[:UID] = "-#{utc_datetime(start_datetime)}-#{url_encode_ical(title)}" unless params[:UID] # set uid based on starttime and title only if url is unavailable
+      
+      new_line = "%0A"
+      params.each do |key, value|
+        if key == :ORGANIZER
+          calendar_url << "#{new_line}#{key};#{value}"
+        else
+          calendar_url << "#{new_line}#{key}:#{value}"
+        end
+      end
+
+      calendar_url << "%0AEND:VEVENT%0AEND:VCALENDAR"
+
+      return calendar_url
+    end
   
     def google_url
       # Eg. https://www.google.com/calendar/render?action=TEMPLATE&text=Holly%27s%208th%20Birthday!&dates=20200615T180000/20200615T190000&ctz=Europe/London&details=Join%20us%20to%20celebrate%20with%20lots%20of%20games%20and%20cake!&location=Apartments,%20London&sprop=&sprop=name:
