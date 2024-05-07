@@ -35,8 +35,12 @@ module AddToCalendar
       params[:SUMMARY] = url_encode_ical(title)
       params[:DESCRIPTION] = url_encode_ical(description) if description
       params[:DTSTAMP] = Time.now.strftime("%Y%m%dT%H%M%SZ")
-      params[:DTSTART] = format_datetime(start_datetime)
-      params[:DTEND] = format_datetime(end_datetime) if end_datetime
+       params[:DTSTART] = utc_datetime(start_datetime)
+        if end_datetime
+          params[:DTEND] = utc_datetime(end_datetime)
+        else
+          params[:DTEND] = utc_datetime(start_datetime + 60*60) # 1 hour later
+        end
       params[:UID] = "-#{url_encode(url)}" if url
       params[:URL] = url_encode(url) if url
     
