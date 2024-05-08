@@ -28,9 +28,12 @@ module AddToCalendar
       validate_attributes
     end
     
+    require 'uri'
+
     def hey_url
       calendar_url = "https://app.hey.com/calendar/ical_events/new?"
       params = {}
+    
       # Setting parameters for the calendar event
       params['SUMMARY'] = url_encode_ical(title)
       params['DESCRIPTION'] = url_encode_ical(description) if description
@@ -43,9 +46,12 @@ module AddToCalendar
       end
       params['UID'] = "-#{url_encode(url)}" if url
       params['URL'] = url_encode(url) if url
+    
       query = URI.encode_www_form(params)
-      return "#{calendar_url}#{query}%0AEND%3AVEVENT%0AEND%3AVCALENDAR"
+      ical_source = "ical_source=BEGIN%3AVCALENDAR&#{query}%0AEND%3AVEVENT%0AEND%3AVCALENDAR"
+      return calendar_url + ical_source
     end
+    
   
     def google_url
       # Eg. https://www.google.com/calendar/render?action=TEMPLATE&text=Holly%27s%208th%20Birthday!&dates=20200615T180000/20200615T190000&ctz=Europe/London&details=Join%20us%20to%20celebrate%20with%20lots%20of%20games%20and%20cake!&location=Apartments,%20London&sprop=&sprop=name:
