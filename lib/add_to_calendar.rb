@@ -44,11 +44,9 @@ module AddToCalendar
       params['UID'] = "-#{url_encode(url)}" if url
       params['URL'] = url_encode(url) if url
       
-      # Constructing the URL
       ical_source = params.map { |key, value| "#{key}=#{value}" }.join('%0A')
-      calendar_url += ical_source
-      encoded_calendar_url = URI.encode_www_form(ical_source: calendar_url)
-      return encoded_calendar_url
+      query = URI.encode_www_form(ical_source: ical_source)
+      return calendar_url + query
     end
   
     def google_url
