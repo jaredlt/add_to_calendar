@@ -31,24 +31,24 @@ module AddToCalendar
     def hey_url
       calendar_url = "https://app.hey.com/calendar/ical_events/new?"
       params = {}
-      params[:SUMMARY] = url_encode_ical(title)
-      params[:DESCRIPTION] = url_encode_ical(description) if description
-      params[:DTSTAMP] = Time.now.strftime("%Y%m%dT%H%M%SZ")
-       params[:DTSTART] = utc_datetime(start_datetime)
-        if end_datetime
-          params[:DTEND] = utc_datetime(end_datetime)
-        else
-          params[:DTEND] = utc_datetime(start_datetime + 60*60) # 1 hour later
-        end
-      params[:UID] = "-#{url_encode(url)}" if url
-      params[:URL] = url_encode(url) if url
-    
-      params.each do |key, value|
-        calendar_url << "%0A#{key}%3A#{value}"
+      # Setting parameters for the calendar event
+      params['SUMMARY'] = url_encode_ical(title)
+      params['DESCRIPTION'] = url_encode_ical(description) if description
+      params['DTSTAMP'] = Time.now.strftime("%Y%m%dT%H%M%SZ")
+      params['DTSTART'] = utc_datetime(start_datetime)
+      if end_datetime
+        params['DTEND'] = utc_datetime(end_datetime)
+      else
+        params['DTEND'] = utc_datetime(start_datetime + 60*60) # 1 hour later
       end
-      ical_source = calendar_url + params
-      calendar_url  = URI.encode_www_form(ical_source: ical_source)
-      return calendar_url
+      params['UID'] = "-#{url_encode(url)}" if url
+      params['URL'] = url_encode(url) if url
+      
+      # Constructing the URL
+      ical_source = params.map { |key, value| "#{key}=#{value}" }.join('%0A')
+      calendar_url += ical_source
+      encoded_calendar_url = URI.encode_www_form(ical_source: calendar_url)
+      return encoded_calendar_url
     end
   
     def google_url
