@@ -34,6 +34,11 @@ module AddToCalendar
       calendar_url = "https://app.hey.com/calendar/ical_events/new?"
       params = {}
     
+      params['BEGIN'] = 'VCALENDAR'
+      params['VERSION'] = '2.0'
+      params['PRODID'] = url_encode_ical(Rails.application.class.to_s.split("::").first) #Appliacaion name
+      params['CALSCALE'] = 'GREGORIAN'
+    
       # Setting parameters for the calendar event
       params['SUMMARY'] = url_encode_ical(title)
       params['DESCRIPTION'] = url_encode_ical(description) if description
@@ -46,9 +51,10 @@ module AddToCalendar
       end
       params['UID'] = "-#{url_encode(url)}" if url
       params['URL'] = url_encode(url) if url
+  
     
       query = URI.encode_www_form(params)
-      ical_source = "ical_source=BEGIN%3AVCALENDAR&#{query}%0AEND%3AVEVENT%0AEND%3AVCALENDAR"
+      ical_source = "#{query}%0AEND%3AVEVENT%0AEND%3AVCALENDAR"
       return calendar_url + ical_source
     end
     
