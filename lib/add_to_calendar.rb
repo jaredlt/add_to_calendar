@@ -29,8 +29,7 @@ module AddToCalendar
     end
     
     def hey_url
-      calendar_url = "https://app.hey.com/calendar/ical_events/new?ical_source=BEGIN%3AVCALENDAR%0AVERSION%3A2.0%0APRODID%3A-%2F%2FBasecamp%2F%2FBC3%2F%2FEN%0ACALSCALE%3AGREGORIAN%0A%0ABEGIN%3AVEVENT"
-    
+      calendar_url = "https://app.hey.com/calendar/ical_events/new?"
       params = {}
       params[:SUMMARY] = url_encode_ical(title)
       params[:DESCRIPTION] = url_encode_ical(description) if description
@@ -47,8 +46,8 @@ module AddToCalendar
       params.each do |key, value|
         calendar_url << "%0A#{key}%3A#{value}"
       end
-    
-      calendar_url << "%0AEND%3AVEVENT%0AEND%3AVCALENDAR"
+      ical_source = calendar_url + params
+      calendar_url  = URI.encode_www_form(ical_source: ical_source)
       return calendar_url
     end
   
