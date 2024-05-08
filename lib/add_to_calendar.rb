@@ -44,7 +44,7 @@ module AddToCalendar
       params['UID'] = "-#{url_encode(url)}" if url
       params['URL'] = url_encode(url) if url
       query = URI.encode_www_form(params)
-      return calendar_url + query
+      return "#{calendar_url}#{query}%0AEND%3AVEVENT%0AEND%3AVCALENDAR"
     end
   
     def google_url
