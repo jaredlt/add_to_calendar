@@ -31,31 +31,58 @@ module AddToCalendar
     require 'uri'
 
     def hey_url
-      calendar_url = "https://app.hey.com/calendar/ical_events/new?"
+      calendar_url = "https://app.hey.com/calendar/ical_events/new?ical_source=BEGIN%3AVCALENDAR%0ABEGIN%3AVEVENT"
+      
       params = {}
-    
-      params['BEGIN'] = 'VCALENDAR'
-      params['VERSION'] = '2.0'
-      params['PRODID'] = url_encode_ical(Rails.application.class.to_s.split("::").first) #Appliacaion name
-      params['CALSCALE'] = 'GREGORIAN'
-    
-      # Setting parameters for the calendar event
-      params['SUMMARY'] = url_encode_ical(title)
-      params['DESCRIPTION'] = url_encode_ical(description) if description
-      params['DTSTAMP'] = Time.now.strftime("%Y%m%dT%H%M%SZ")
-      params['DTSTART'] = utc_datetime(start_datetime)
-      if end_datetime
-        params['DTEND'] = utc_datetime(end_datetime)
-      else
-        params['DTEND'] = utc_datetime(start_datetime + 60*60) # 1 hour later
-      end
-      params['UID'] = "-#{url_encode(url)}" if url
-      params['URL'] = url_encode(url) if url
+      params[:PRODID] = Rails.application.class.name&.split("::")&.first
+      params[:SUMMARY] = url_encode_ical(title)
+      params[:DTSTAMP] = Time.now.strftime("%Y%m%dT%H%M%SZ")
   
+      if all_day
+        one_day = 1 * 24 * 60 * 60
+        params["DTSTART;VALUE=DATE"] = format_date(start_datetime)
+        if end_datetime
+          params["DTEND;VALUE=DATE"] = format_date(end_datetime + one_day)
+        else
+          params["DTEND;VALUE=DATE"] = format_date(start_datetime + one_day)
+        end
+      else
+        params[:DTSTART] = utc_datetime(start_datetime)
+        if end_datetime
+          params[:DTEND] = utc_datetime(end_datetime)
+        else
+          params[:DTEND] = utc_datetime(start_datetime + 60*60) # 1 hour later
+        end
+      end
+      
+      params[:URL] = url_encode(url) if url
+      params[:UID] = "-#{url_encode(url)}" if url
+      params[:UID] = "-#{utc_datetime(start_datetime)}-#{url_encode_ical(title)}" unless params[:UID] # set uid based on starttime and title only if url is unavailable
+      params[:DESCRIPTION] = url_encode_ical(description) if description
+        if add_url_to_description && url
+          if params[:DESCRIPTION]
+            params[:DESCRIPTION] << "\\n\\n#{url_encode(url)}"
+          else
+            params[:DESCRIPTION] = url_encode(url)
+          end
+        end
+      if organizer
+        params[:ORGANIZER] = url_encode_ical("CN=\"#{organizer[:name]}\":mailto:#{organizer[:email]}")
+      end
+      params[:LOCATION] = url_encode_ical(location) if location
+  
+      new_line = "%0A"
+      params.each do |key, value|
+        if key == :ORGANIZER
+          calendar_url << "#{new_line}#{key};#{value}"
+        else
+          calendar_url << "#{new_line}#{key}:#{value}"
+        end
+      end
+  
+      calendar_url << "%0AEND%3AVEVENT%0AEND%3AVCALENDAR"
     
-      query = URI.encode_www_form(params)
-      ical_source = "#{query}%0AEND%3AVEVENT%0AEND%3AVCALENDAR"
-      return calendar_url + ical_source
+      return calendar_url
     end
     
   
