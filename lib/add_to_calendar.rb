@@ -27,8 +27,6 @@ module AddToCalendar
   
       validate_attributes
     end
-    
-    require 'uri'
 
     def hey_url
       calendar_url = "https://app.hey.com/calendar/ical_events/new?ical_source=BEGIN%3AVCALENDAR%0ABEGIN%3AVEVENT"
