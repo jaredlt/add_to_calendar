@@ -22,7 +22,7 @@ class IcalUrlTest < Minitest::Test
     @next_month_day_plus_eight_days = (next_month + seven_days + one_day).strftime('%d')
 
     @title = "Holly's 8th Birthday!"
-    @timezone = "Europe/London"
+    @timezone = "UTC"
     @url = "https://www.example.com/event-details"
     @location = "Flat 4, The Edge, 38 Smith-Dorrien St, London, N1 7GU"
     @description = "Come join us for lots of fun & cake!"

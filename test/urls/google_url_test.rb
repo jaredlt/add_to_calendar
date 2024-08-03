@@ -22,7 +22,7 @@ class GoogleUrlTest < Minitest::Test
     @next_month_day_plus_eight_days = (next_month + seven_days + one_day).strftime('%d')
 
     @title = "Holly's 8th Birthday!"
-    @timezone = "Europe/London"
+    @timezone = "UTC"
     @url = "https://www.example.com/event-details"
     @location = "Flat 4, The Edge, 38 Smith-Dorrien St, London, N1 7GU"
     @description = "Come join us for lots of fun & cake!"
@@ -30,7 +30,7 @@ class GoogleUrlTest < Minitest::Test
     @url_with_defaults_required = "https://www.google.com/calendar/render?action=TEMPLATE" +
                                   "&text=Holly%27s%208th%20Birthday%21" + 
                                   "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}T133000/#{@next_month_year}#{@next_month_month}#{@next_month_day}T143000" + 
-                                  "&ctz=Europe/London"
+                                  "&ctz=UTC"
   end
 
   def test_with_only_required_attributes
@@ -44,7 +44,7 @@ class GoogleUrlTest < Minitest::Test
     assert cal.google_url == "https://www.google.com/calendar/render?action=TEMPLATE" +
                             "&text=Holly%27s%208th%20Birthday%21" + 
                             "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}T133000/#{@next_month_year}#{@next_month_month}#{@next_month_day}T143000" + 
-                            "&ctz=Europe/London"
+                            "&ctz=UTC"
   end
 
   def test_with_end_datetime
@@ -57,7 +57,7 @@ class GoogleUrlTest < Minitest::Test
     assert cal.google_url == "https://www.google.com/calendar/render?action=TEMPLATE" +
                              "&text=Holly%27s%208th%20Birthday%21" + 
                              "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}T133000/#{@next_month_year}#{@next_month_month}#{@next_month_day}T170000" +
-                             "&ctz=Europe/London"
+                             "&ctz=UTC"
   end
 
   def test_with_location
@@ -119,7 +119,7 @@ class GoogleUrlTest < Minitest::Test
     assert cal.google_url == "https://www.google.com/calendar/render?action=TEMPLATE" +
                              "&text=Holly%27s%208th%20Birthday%21" + 
                              "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}T133000/#{@next_month_year}#{@next_month_month}#{@next_month_day}T170000" +
-                             "&ctz=Europe/London" + 
+                             "&ctz=UTC" + 
                              "&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU" + 
                              "&details=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details"
   end
@@ -135,7 +135,7 @@ class GoogleUrlTest < Minitest::Test
     assert cal.google_url == "https://www.google.com/calendar/render?action=TEMPLATE" +
                              "&text=Holly%27s%208th%20Birthday%21" + 
                              "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}/#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}" +
-                             "&ctz=Europe/London"
+                             "&ctz=UTC"
   end
 
   def test_all_day_spans_multiple_days
@@ -149,7 +149,7 @@ class GoogleUrlTest < Minitest::Test
     assert cal.google_url == "https://www.google.com/calendar/render?action=TEMPLATE" +
                              "&text=Holly%27s%208th%20Birthday%21" + 
                              "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}/#{@next_month_year_plus_eight_days}#{@next_month_month_plus_eight_days}#{@next_month_day_plus_eight_days}" +
-                             "&ctz=Europe/London"
+                             "&ctz=UTC"
   end
 
   def test_all_day_end_date_is_plus_one_from_end_date
@@ -163,7 +163,7 @@ class GoogleUrlTest < Minitest::Test
     assert cal.google_url == "https://www.google.com/calendar/render?action=TEMPLATE" +
                              "&text=Holly%27s%208th%20Birthday%21" + 
                              "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}/#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}" +
-                             "&ctz=Europe/London"
+                             "&ctz=UTC"
   end
 
   def test_all_day_without_end_date_is_single_day
@@ -176,7 +176,7 @@ class GoogleUrlTest < Minitest::Test
     assert cal.google_url == "https://www.google.com/calendar/render?action=TEMPLATE" +
                              "&text=Holly%27s%208th%20Birthday%21" + 
                              "&dates=#{@next_month_year}#{@next_month_month}#{@next_month_day}/#{@next_month_year_plus_one_day}#{@next_month_month_plus_one_day}#{@next_month_day_plus_one_day}" +
-                             "&ctz=Europe/London"
+                             "&ctz=UTC"
   end
   
 end
