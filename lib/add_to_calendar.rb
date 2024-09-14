@@ -92,6 +92,59 @@ module AddToCalendar
       return calendar_url
     end
 
+    def hey_url
+      calendar_url = "https://app.hey.com/calendar/ical_events/new?ical_source=BEGIN%3AVCALENDAR%0AVERSION%3A2.0%0APRODID%3A-//AddToCalendar//RubyGem//EN%0ABEGIN%3AVEVENT"
+      
+      params = {}
+      params[:SUMMARY] = url_encode(title)
+      params[:DTSTAMP] = Time.now.strftime("%Y%m%dT%H%M%SZ")
+  
+      if all_day
+        one_day = 1 * 24 * 60 * 60
+        params["DTSTART%3BVALUE=DATE"] = format_date(start_datetime)
+        if end_datetime
+          params["DTEND%3BVALUE=DATE"] = format_date(end_datetime + one_day)
+        else
+          params["DTEND%3BVALUE=DATE"] = format_date(start_datetime + one_day)
+        end
+      else
+        params[:DTSTART] = utc_datetime(start_datetime)
+        if end_datetime
+          params[:DTEND] = utc_datetime(end_datetime)
+        else
+          params[:DTEND] = utc_datetime(start_datetime + 60*60) # 1 hour later
+        end
+      end
+      
+      params[:URL] = url_encode(url) if url
+      params[:UID] = "-#{utc_datetime(start_datetime)}-#{url_encode(title)}"
+      params[:DESCRIPTION] = url_encode_hey(description) if description
+      if add_url_to_description && url
+        if params[:DESCRIPTION]
+          params[:DESCRIPTION] << "\n\n#{url_encode(url)}"
+        else
+          params[:DESCRIPTION] = url_encode(url)
+        end
+      end
+      if organizer
+        params[:ORGANIZER] = url_encode("CN=\"#{organizer[:name]}\"%3Amailto%3A#{organizer[:email]}")
+      end
+      params[:LOCATION] = url_encode(location) if location
+      
+      new_line = "%0A"
+      params.each do |key, value|
+        if key == :ORGANIZER
+          calendar_url << "#{new_line}#{key}%3B#{value}"
+        else
+          calendar_url << "#{new_line}#{key}%3A#{value}"
+        end
+      end
+  
+      calendar_url << "%0AEND%3AVEVENT%0AEND%3AVCALENDAR"
+    
+      return calendar_url
+    end
+
     def office365_url
       # Eg. https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=Holly%27s%208th%20Birthday%21&startdt=2020-05-12T12:30:00Z&enddt=2020-05-12T16:00:00Z&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU
       microsoft("office365")
@@ -324,6 +377,17 @@ module AddToCalendar
             url_encode(e)
           end
         }.join("\\n")
+      end
+
+      def url_encode_hey(s)
+        string = s.dup # don't modify original input
+        string.split("\n").map { |e|
+          if e.empty?
+            e
+          else
+            url_encode(e)
+          end
+        }.join("\n")
       end
 
       def yahoo_param(key)
