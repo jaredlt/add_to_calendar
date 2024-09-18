@@ -1,6 +1,6 @@
 # AddToCalendar
 
-A ruby gem to generate 'Add To Calendar' URLs for Android, Apple, Google, Office 365, Outlook, Outlook.com and Yahoo calendars.
+A ruby gem to generate 'Add To Calendar' URLs for Android, Apple, Google, Hey, Office 365, Outlook, Outlook.com and Yahoo calendars.
 
 If this gem brings you some value feel free to buy me a coffee :) [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P71PK9T)
 
