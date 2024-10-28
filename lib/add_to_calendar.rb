@@ -146,7 +146,7 @@ module AddToCalendar
     end
 
     def office365_url
-      # Eg. https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=Holly%27s%208th%20Birthday%21&startdt=2020-05-12T12:30:00Z&enddt=2020-05-12T16:00:00Z&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU
+      # Eg. https://outlook.office.com/calendar/0/action/compose?rru=addevent&subject=Holly%27s%208th%20Birthday%21&startdt=2020-05-12T12:30:00Z&enddt=2020-05-12T16:00:00Z&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%0A%0Ahttps%3A%2F%2Fwww.example.com%2Fevent-details&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU
       microsoft("office365")
     end
     
@@ -254,7 +254,7 @@ module AddToCalendar
         if service == "outlook.com"
           calendar_url = "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent"
         elsif service == "office365"
-          calendar_url = "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent"
+          calendar_url = "https://outlook.office.com/calendar/0/action/compose?rru=addevent"
         else
           raise MicrosoftServiceError, ":service must be 'outlook.com' or 'office365'. '#{service}' given"
         end

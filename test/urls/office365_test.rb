@@ -31,9 +31,9 @@ class Office365UrlTest < Minitest::Test
     @location = "Flat 4, The Edge, 38 Smith-Dorrien St, London, N1 7GU"
     @description = "Come join us for lots of fun & cake!"
 
-    @url_with_defaults_required = "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
-                                  "&subject=Holly%27s%208th%20Birthday%21" + 
-                                  "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" + 
+    @url_with_defaults_required = "https://outlook.office.com/calendar/0/action/compose?rru=addevent" +
+                                  "&subject=Holly%27s%208th%20Birthday%21" +
+                                  "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" +
                                   "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour+1}:30:00Z"
 
   end
@@ -50,9 +50,9 @@ class Office365UrlTest < Minitest::Test
   def test_without_end_datetime
     # should set duration as 1 hour
     cal = AddToCalendar::URLs.new(start_datetime: Time.new(@next_month_year,@next_month_month,@next_month_day,@hour,30,00,0), title: @title, timezone: @timezone)
-    assert cal.office365_url == "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
-                                 "&subject=Holly%27s%208th%20Birthday%21" + 
-                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" + 
+    assert cal.office365_url == "https://outlook.office.com/calendar/0/action/compose?rru=addevent" +
+                                 "&subject=Holly%27s%208th%20Birthday%21" +
+                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" +
                                  "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour+1}:30:00Z"
   end
 
@@ -63,9 +63,9 @@ class Office365UrlTest < Minitest::Test
       title: @title, 
       timezone: @timezone
     )
-    assert cal.office365_url == "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
-                                 "&subject=Holly%27s%208th%20Birthday%21" + 
-                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" + 
+    assert cal.office365_url == "https://outlook.office.com/calendar/0/action/compose?rru=addevent" +
+                                 "&subject=Holly%27s%208th%20Birthday%21" +
+                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" +
                                  "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour+4}:00:00Z"
   end
 
@@ -76,9 +76,9 @@ class Office365UrlTest < Minitest::Test
       title: @title, 
       timezone: @timezone
     )
-    assert cal.office365_url == "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
-                                 "&subject=Holly%27s%208th%20Birthday%21" + 
-                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" + 
+    assert cal.office365_url == "https://outlook.office.com/calendar/0/action/compose?rru=addevent" +
+                                 "&subject=Holly%27s%208th%20Birthday%21" +
+                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" +
                                  "&enddt=#{@next_month_year_plus_one_day}-#{@next_month_month_plus_one_day}-#{@next_month_day_plus_one_day}T#{@hour+4}:00:00Z"
   end
 
@@ -147,11 +147,11 @@ class Office365UrlTest < Minitest::Test
       location: @location,
       description: @description,
     )
-    assert cal.office365_url == "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" + 
-                                 "&subject=Holly%27s%208th%20Birthday%21" + 
-                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" + 
-                                 "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour+4}:00:00Z" + 
-                                 "&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%3Cbr%3E%3Cbr%3Ehttps%3A%2F%2Fwww.example.com%2Fevent-details" + 
+    assert cal.office365_url == "https://outlook.office.com/calendar/0/action/compose?rru=addevent" +
+                                 "&subject=Holly%27s%208th%20Birthday%21" +
+                                 "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" +
+                                 "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour+4}:00:00Z" +
+                                 "&body=Come%20join%20us%20for%20lots%20of%20fun%20%26%20cake%21%3Cbr%3E%3Cbr%3Ehttps%3A%2F%2Fwww.example.com%2Fevent-details" +
                                  "&location=Flat%204%2C%20The%20Edge%2C%2038%20Smith-Dorrien%20St%2C%20London%2C%20N1%207GU"
   end
 
@@ -168,9 +168,9 @@ class Office365UrlTest < Minitest::Test
       timezone: @timezone
     )
 
-    assert cal.office365_url == "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
+    assert cal.office365_url == "https://outlook.office.com/calendar/0/action/compose?rru=addevent" +
                                   "&subject=Birthday%20and%20Sleepover" +
-                                  "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" + 
+                                  "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour}:30:00Z" +
                                   "&enddt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}T#{@hour+1}:30:00Z"
   end
 
@@ -182,12 +182,12 @@ class Office365UrlTest < Minitest::Test
       title: @title, 
       timezone: @timezone
     )
-    yahoo_url = "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
-                "&subject=Holly%27s%208th%20Birthday%21" + 
-                "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}" + 
+    office365_url = "https://outlook.office.com/calendar/0/action/compose?rru=addevent" +
+                "&subject=Holly%27s%208th%20Birthday%21" +
+                "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}" +
                 "&enddt=#{@next_month_year_plus_one_day}-#{@next_month_month_plus_one_day}-#{@next_month_day_plus_one_day}" +
                 "&allday=true"
-    assert cal.office365_url == yahoo_url
+    assert cal.office365_url == office365_url
   end
 
   def test_all_day_spans_multiple_days
@@ -198,12 +198,12 @@ class Office365UrlTest < Minitest::Test
       title: @title, 
       timezone: @timezone
     )
-    yahoo_url = "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
-                "&subject=Holly%27s%208th%20Birthday%21" + 
-                "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}" + 
+    office365_url = "https://outlook.office.com/calendar/0/action/compose?rru=addevent" +
+                "&subject=Holly%27s%208th%20Birthday%21" +
+                "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}" +
                 "&enddt=#{@next_month_year_plus_eight_days}-#{@next_month_month_plus_eight_days}-#{@next_month_day_plus_eight_days}" +
                 "&allday=true"
-    assert cal.office365_url == yahoo_url
+    assert cal.office365_url == office365_url
   end
 
   def test_all_day_without_end_date_is_single_day
@@ -213,12 +213,12 @@ class Office365UrlTest < Minitest::Test
       title: @title, 
       timezone: @timezone
     )
-    yahoo_url = "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
-                "&subject=Holly%27s%208th%20Birthday%21" + 
-                "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}" + 
+    office365_url = "https://outlook.office.com/calendar/0/action/compose?rru=addevent" +
+                "&subject=Holly%27s%208th%20Birthday%21" +
+                "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}" +
                 "&enddt=#{@next_month_year_plus_one_day}-#{@next_month_month_plus_one_day}-#{@next_month_day_plus_one_day}" +
                 "&allday=true"
-    assert cal.office365_url == yahoo_url
+    assert cal.office365_url == office365_url
   end
 
   def test_all_day_end_date_is_plus_one_from_end_date
@@ -229,12 +229,12 @@ class Office365UrlTest < Minitest::Test
       title: @title, 
       timezone: @timezone
     )
-    yahoo_url = "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
-                "&subject=Holly%27s%208th%20Birthday%21" + 
-                "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}" + 
+    office365_url = "https://outlook.office.com/calendar/0/action/compose?rru=addevent" +
+                "&subject=Holly%27s%208th%20Birthday%21" +
+                "&startdt=#{@next_month_year}-#{@next_month_month}-#{@next_month_day}" +
                 "&enddt=#{@next_month_year_plus_one_day}-#{@next_month_month_plus_one_day}-#{@next_month_day_plus_one_day}" +
                 "&allday=true"
-    assert cal.office365_url == yahoo_url
+    assert cal.office365_url == office365_url
   end
   
 end
