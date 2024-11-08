@@ -45,11 +45,11 @@ Or install it yourself as:
 #=> "https://app.hey.com/calendar/ical_events/new?ical_source=BEGIN%3AVCALENDAR%0AVERSION%3A2.0%0APRODID%3A-//AddToCalendar//RubyGem//EN%0ABEGIN%3AVEVENT%0ASUMMARY%3AHolly%27s%209th%20birthday%21%0ADTSTAMP%3A20240913T151029Z%0ADTSTART%3A20240906T123000Z%0ADTEND%3A20240906T133000Z%0AUID%3A-20240906T123000Z-Holly%27s%209th%20birthday%21%0AEND%3AVEVENT%0AEND%3AVCALENDAR"
 
 @cal.office365_url
-#=> "https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=Christmas%20party%21&startdt=2020-12-12T13:30:00Z&enddt=2020-12-12T14:30:00Z"
+#=> "https://outlook.office.com/calendar/0/action/compose?rru=addevent&subject=Christmas%20party%21&startdt=2020-12-12T13:30:00Z&enddt=2020-12-12T14:30:00Z"
 
 # For outlook.com, different to Outlook the desktop application below
 @cal.outlook_com_url
-#=> "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=Christmas%20party%21&startdt=2020-12-12T13:30:00Z&enddt=2020-12-12T14:30:00Z"
+#=> "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=Christmas%20party%21&startdt=2020-12-12T13:30:00Z&enddt=2020-12-12T14:30:00Z"
 
 # ical provides a data-uri which will download a properly formatted *.ics file (see 'Creating HTML links' section)
 @cal.ical_url
