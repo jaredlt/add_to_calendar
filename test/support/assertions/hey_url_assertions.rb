@@ -1,5 +1,5 @@
 require 'uri'
-require 'cgi'
+require 'cgi/escape'
 
 module Minitest::Assertions
   def assert_hey_urls_equal(expected, actual, msg = nil)
