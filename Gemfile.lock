@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    add_to_calendar (0.5.1)
+    add_to_calendar (0.5.2)
       tzinfo (>= 1.1, < 3)
       tzinfo-data (~> 1.2020)
 
@@ -43,7 +43,7 @@ DEPENDENCIES
   timecop
 
 CHECKSUMS
-  add_to_calendar (0.5.1)
+  add_to_calendar (0.5.2)
   coderay (1.1.3) sha256=dc530018a4684512f8f38143cd2a096c9f02a1fc2459edcfe534787a7fc77d4b
   concurrent-ruby (1.3.6) sha256=6b56837e1e7e5292f9864f34b69c5a2cbc75c0cf5338f1ce9903d10fa762d5ab
   drb (2.2.3) sha256=0b00d6fdb50995fe4a45dea13663493c841112e4068656854646f418fda13373
